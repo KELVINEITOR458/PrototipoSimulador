@@ -224,6 +224,7 @@ function executeStepFunctions(stepNumber) {
                 calculateCashFlow();
                 calculateViabilityScore();
                 generateIAAlerts();
+                generatePriceManipulator();
                     console.log('Paso 6: Análisis final completado');
             }, 500);
             break;
@@ -726,15 +727,23 @@ function validateDishIngredientConsistency(dishName, ingredientNames) {
 function validatePricing() {
     const priceInputs = document.querySelectorAll('.price-input');
     let hasValidPrice = false;
+    let hasEmptyFields = false;
     
     priceInputs.forEach(input => {
         const price = parseFloat(input.value) || 0;
-        if (price > 0) {
-            hasValidPrice = true;
+        const fieldValue = input.value.trim();
+        
+        if (fieldValue !== '') {
+            if (price > 0) {
+                hasValidPrice = true;
+            }
+        } else {
+            hasEmptyFields = true;
         }
     });
     
-    if (!hasValidPrice) {
+    // Solo mostrar error si no hay campos vacíos y no hay precios válidos
+    if (!hasEmptyFields && !hasValidPrice) {
         alert('Por favor ingresa al menos un precio de venta.');
         return false;
     }
@@ -835,6 +844,54 @@ function setupFormEvents() {
             }
         });
     }
+    
+    // Evento para switch de servicio a domicilio
+    const servicioDomicilioSwitch = document.getElementById('servicioDomicilio');
+    if (servicioDomicilioSwitch) {
+        servicioDomicilioSwitch.addEventListener('change', function() {
+            businessData.configuracion.servicioDomicilio = this.checked;
+            saveToStorage();
+            generateStepSummaries();
+            console.log('Servicio a domicilio:', this.checked ? 'Activado' : 'Desactivado');
+        });
+    }
+    
+    // Eventos para otros campos del paso 1
+    const businessNameInput = document.getElementById('businessName');
+    if (businessNameInput) {
+        businessNameInput.addEventListener('input', function() {
+            businessData.configuracion.nombreNegocio = this.value;
+            saveToStorage();
+            generateStepSummaries();
+        });
+    }
+    
+    const sizeInput = document.getElementById('size');
+    if (sizeInput) {
+        sizeInput.addEventListener('input', function() {
+            businessData.configuracion.tamaño = parseFloat(this.value) || 0;
+            saveToStorage();
+            generateStepSummaries();
+        });
+    }
+    
+    const capacityInput = document.getElementById('capacity');
+    if (capacityInput) {
+        capacityInput.addEventListener('input', function() {
+            businessData.configuracion.capacidad = parseFloat(this.value) || 0;
+            saveToStorage();
+            generateStepSummaries();
+        });
+    }
+    
+    const descriptionInput = document.getElementById('description');
+    if (descriptionInput) {
+        descriptionInput.addEventListener('input', function() {
+            businessData.configuracion.descripcion = this.value;
+            saveToStorage();
+            generateStepSummaries();
+        });
+    }
 }
 
 // Configurar eventos específicos para inversión
@@ -886,6 +943,43 @@ function setupInvestmentEvents() {
         const locationInput = document.getElementById('location');
         if (locationInput) {
             locationInput.value = businessData.configuracion.ubicacion;
+        }
+    }
+    
+    // Restaurar switch de servicio a domicilio
+    if (businessData.configuracion.servicioDomicilio !== undefined) {
+        const servicioDomicilioSwitch = document.getElementById('servicioDomicilio');
+        if (servicioDomicilioSwitch) {
+            servicioDomicilioSwitch.checked = businessData.configuracion.servicioDomicilio;
+        }
+    }
+    
+    // Restaurar otros campos del paso 1
+    if (businessData.configuracion.nombreNegocio) {
+        const businessNameInput = document.getElementById('businessName');
+        if (businessNameInput) {
+            businessNameInput.value = businessData.configuracion.nombreNegocio;
+        }
+    }
+    
+    if (businessData.configuracion.tamaño) {
+        const sizeInput = document.getElementById('size');
+        if (sizeInput) {
+            sizeInput.value = businessData.configuracion.tamaño;
+        }
+    }
+    
+    if (businessData.configuracion.capacidad) {
+        const capacityInput = document.getElementById('capacity');
+        if (capacityInput) {
+            capacityInput.value = businessData.configuracion.capacidad;
+        }
+    }
+    
+    if (businessData.configuracion.descripcion) {
+        const descriptionInput = document.getElementById('description');
+        if (descriptionInput) {
+            descriptionInput.value = businessData.configuracion.descripcion;
         }
     }
 }
@@ -1130,6 +1224,28 @@ function setupAutoSave() {
             }, 100);
         }
     });
+    
+    // Limpiar errores cuando el usuario empiece a escribir en campos de precio
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('price-input')) {
+            const fieldValue = e.target.value.trim();
+            if (fieldValue === '') {
+                // Si el campo está vacío, remover errores
+                removeFieldError(e.target);
+            }
+            
+            // Guardar el precio inmediatamente
+            const productId = e.target.dataset.product;
+            if (productId) {
+                if (!businessData.precios.productos) {
+                    businessData.precios.productos = {};
+                }
+                businessData.precios.productos[productId] = parseFloat(e.target.value) || 0;
+                console.log(`Precio guardado para producto ${productId}: $${businessData.precios.productos[productId]}`);
+                saveToStorage();
+            }
+        }
+    });
 }
 
 // Validación en tiempo real para campos individuales
@@ -1213,9 +1329,13 @@ function validateFieldInRealTime(field) {
     // Validar precios de venta
     if (fieldClass.includes('price-input')) {
         const price = parseFloat(fieldValue) || 0;
-        if (price <= 0) {
+        // Solo mostrar error si el campo no está vacío y el valor es 0 o negativo
+        if (fieldValue !== '' && price <= 0) {
             showFieldError(field, 'El precio de venta debe ser mayor a 0');
             return false;
+        } else if (fieldValue !== '' && price > 0) {
+            // Si el precio es válido, remover cualquier error existente
+            removeFieldError(field);
         }
     }
     
@@ -1471,22 +1591,30 @@ function validatePricingInRealTime() {
     
     let isValid = true;
     let hasValidPrice = false;
+    let hasEmptyFields = false;
     
     priceInputs.forEach(input => {
         const price = parseFloat(input.value) || 0;
+        const fieldValue = input.value.trim();
         
-        if (price < 0) {
-            showFieldError(input, 'El precio no puede ser negativo');
-            isValid = false;
-        } else if (price === 0) {
-            showFieldError(input, 'El precio de venta debe ser mayor a 0');
-            isValid = false;
-        } else if (price > 0) {
-            hasValidPrice = true;
+        // Solo validar si el campo no está vacío
+        if (fieldValue !== '') {
+            if (price < 0) {
+                showFieldError(input, 'El precio no puede ser negativo');
+                isValid = false;
+            } else if (price === 0) {
+                showFieldError(input, 'El precio de venta debe ser mayor a 0');
+                isValid = false;
+            } else if (price > 0) {
+                hasValidPrice = true;
+            }
+        } else {
+            hasEmptyFields = true;
         }
     });
     
-    if (!hasValidPrice) {
+    // Solo mostrar error de paso si no hay campos vacíos y no hay precios válidos
+    if (!hasEmptyFields && !hasValidPrice) {
         showStepError('precios', 'Debes ingresar al menos un precio de venta');
         isValid = false;
     }
@@ -2784,6 +2912,9 @@ function analyzeVariableCostsData(data, context) {
 
 // Análisis de precios
 function analyzePricingData(data, context) {
+    console.log('Iniciando análisis de precios con datos:', data);
+    console.log('Contexto:', context);
+    
     const analysis = { isValid: true, warnings: [], suggestions: [], estimatedValues: {} };
     
     // Calcular rangos basados en el contexto
@@ -2836,10 +2967,13 @@ function analyzePricingData(data, context) {
     };
     
     if (data.productos) {
+        console.log('Analizando productos:', data.productos);
         Object.entries(data.productos).forEach(([productId, precio]) => {
+            console.log(`Analizando producto ${productId} con precio $${precio}`);
             // Obtener el costo del producto
             const producto = businessData.costosVariables.productos.find(p => p.id == productId);
             if (producto) {
+                console.log(`Producto encontrado: ${producto.nombre}, costo: $${producto.costoTotal}`);
                 const costo = producto.costoTotal || 0;
                 const margen = ((precio - costo) / precio) * 100;
                 const nombreProducto = producto.nombre.toLowerCase();
@@ -2941,6 +3075,41 @@ function validateFixedCostsWithAI() {
     // Limpiar errores anteriores
     clearAllAIErrors();
     
+    // Validar servicios básicos
+    const serviciosArriendo = document.getElementById('serviciosArriendo')?.value || 'ninguno';
+    const serviceInputs = document.querySelectorAll('.service-input:not([disabled])');
+    let hasValidService = false;
+    let serviceErrors = [];
+    
+    // Verificar que al menos un servicio básico tenga valor
+    serviceInputs.forEach(input => {
+        const serviceValue = parseFloat(input.value) || 0;
+        if (serviceValue > 0) {
+            hasValidService = true;
+        } else if (input.dataset.service === 'electricidad' || input.dataset.service === 'agua') {
+            // Para electricidad y agua, si no están incluidos en arriendo, deben tener valor
+            if (serviciosArriendo === 'ninguno' || 
+                (serviciosArriendo === 'agua' && input.dataset.service === 'electricidad') ||
+                (serviciosArriendo === 'luz' && input.dataset.service === 'agua')) {
+                serviceErrors.push(`${input.dataset.service}: Debes ingresar un valor para este servicio básico`);
+            }
+        }
+    });
+    
+    // Si no hay servicios incluidos en arriendo, al menos uno debe tener valor
+    if (serviciosArriendo === 'ninguno' && !hasValidService) {
+        serviceErrors.push('Debes ingresar al menos un servicio básico (electricidad, agua, internet o gas)');
+    }
+    
+    // Mostrar errores de servicios
+    if (serviceErrors.length > 0) {
+        serviceErrors.forEach(error => {
+            showNotification(`❌ ${error}`, 'error');
+        });
+        console.log('Errores de servicios detectados, bloqueando avance');
+        return false;
+    }
+    
     // Obtener datos de costos fijos con nueva estructura de personal
     const fixedCostsData = {
         arriendo: parseFloat(document.getElementById('arriendo')?.value) || 0,
@@ -2956,7 +3125,7 @@ function validateFixedCostsWithAI() {
     const analysis = analyzeFixedCostsData(fixedCostsData, context);
     console.log('Resultado del análisis de costos fijos:', analysis);
     
-    // Mostrar errores inline (solo como advertencias, no bloquean el avance)
+    // Mostrar advertencias inline (no bloquean el avance)
     if (analysis.warnings.length > 0) {
         analysis.warnings.forEach(warning => {
             // Mapear advertencias a campos específicos
@@ -2990,7 +3159,6 @@ function validateFixedCostsWithAI() {
             }
         });
         
-        // Las validaciones IA son solo advertencias, no bloquean el avance
         console.log('Advertencias IA mostradas, pero permitiendo continuar...');
     } else {
         console.log('No se encontraron advertencias de IA para costos fijos');
@@ -3094,21 +3262,55 @@ function validatePricingWithAI() {
     // Limpiar errores anteriores
     clearAllAIErrors();
     
+    // Asegurar que businessData.precios.productos esté inicializado como objeto
+    if (!businessData.precios.productos) {
+        businessData.precios.productos = {};
+    }
+    
+    console.log('Datos de precios a analizar:', businessData.precios);
+    console.log('Productos de costos variables:', businessData.costosVariables.productos);
+    
+    // Verificar que hay al menos un precio ingresado
+    const priceInputs = document.querySelectorAll('.price-input');
+    let hasAnyPrice = false;
+    priceInputs.forEach(input => {
+        const price = parseFloat(input.value) || 0;
+        if (price > 0) {
+            hasAnyPrice = true;
+        }
+    });
+    
+    if (!hasAnyPrice) {
+        console.log('No hay precios ingresados, mostrando error');
+        showNotification('❌ Debes ingresar al menos un precio de venta antes de continuar.', 'error');
+        return false;
+    }
+    
     const analysis = analyzeDataWithAI(businessData.precios, 'pricing');
+    console.log('Análisis de IA:', analysis);
     
     // Mostrar errores inline
     if (analysis.warnings.length > 0) {
+        console.log('Mostrando advertencias de IA:', analysis.warnings);
         analysis.warnings.forEach(warning => {
             // Buscar el producto específico mencionado en la advertencia
             const priceInputs = document.querySelectorAll('.price-input');
+            console.log(`Buscando match para advertencia: "${warning}"`);
             priceInputs.forEach((input, index) => {
                 const productId = input.dataset.product;
-                if (productId && warning.includes(productId)) {
-                    const key = `precio_${productId}`;
-                    if (analysis.estimatedValues[key]) {
-                        showAIError(input, warning, analysis.estimatedValues[key]);
-                    } else {
-                        showAIError(input, warning);
+                console.log(`Revisando input con productId: ${productId}`);
+                // Obtener el nombre del producto para hacer match con las advertencias
+                const product = businessData.costosVariables.productos.find(p => p.id == productId);
+                if (product) {
+                    console.log(`Producto encontrado: ${product.nombre}`);
+                    if (warning.includes(product.nombre)) {
+                        console.log(`Match encontrado para: ${product.nombre}`);
+                        const key = `precio_${productId}`;
+                        if (analysis.estimatedValues[key]) {
+                            showAIError(input, warning, analysis.estimatedValues[key]);
+                        } else {
+                            showAIError(input, warning);
+                        }
                     }
                 }
             });
@@ -3275,6 +3477,13 @@ function autoCompleteConfiguration() {
     
     const description = document.getElementById('description');
     if (description) description.value = 'Restaurante de comida rápida con ambiente familiar y precios accesibles.';
+    
+    // Configurar servicio a domicilio (activado por defecto)
+    const servicioDomicilioSwitch = document.getElementById('servicioDomicilio');
+    if (servicioDomicilioSwitch) {
+        servicioDomicilioSwitch.checked = true;
+        businessData.configuracion.servicioDomicilio = true;
+    }
 }
 
 // Autocompletar inversión
@@ -3419,12 +3628,25 @@ function autoCompleteFixedCosts() {
     // Calcular totales de personal
     calculateStaffTotals();
     
-    // Servicios
+    // Configurar servicios incluidos en arriendo (ninguno por defecto para autocompletado)
+    const serviciosArriendoSelect = document.getElementById('serviciosArriendo');
+    if (serviciosArriendoSelect) {
+        serviciosArriendoSelect.value = 'ninguno';
+        updateServicesVisibility('ninguno');
+    }
+    
+    // Servicios (ahora todos habilitados)
     const electricidadInput = document.querySelector('[data-service="electricidad"]');
-    if (electricidadInput) electricidadInput.value = electricidad;
+    if (electricidadInput) {
+        electricidadInput.disabled = false;
+        electricidadInput.value = electricidad;
+    }
     
     const aguaInput = document.querySelector('[data-service="agua"]');
-    if (aguaInput) aguaInput.value = agua;
+    if (aguaInput) {
+        aguaInput.disabled = false;
+        aguaInput.value = agua;
+    }
     
     const internetInput = document.querySelector('[data-service="internet"]');
     if (internetInput) internetInput.value = internet;
@@ -5285,4 +5507,253 @@ function createIngredientHTML(productId, ingredientId) {
             </button>
         </div>
     `;
+}
+
+// Variables globales para el manipulador de precios
+let originalPrices = {};
+let currentPrices = {};
+
+// Función para generar el manipulador de precios
+function generatePriceManipulator() {
+    const products = businessData.costosVariables.productos || [];
+    const prices = businessData.precios.productos || {};
+    const controlsContainer = document.getElementById('priceControls');
+    
+    if (!controlsContainer || products.length === 0) return;
+    
+    // Guardar precios originales
+    originalPrices = { ...prices };
+    currentPrices = { ...prices };
+    
+    controlsContainer.innerHTML = '';
+    
+    products.forEach(product => {
+        const currentPrice = prices[product.id] || 0;
+        const cost = product.costoTotal || 0;
+        
+        // Calcular rango de precios sugerido
+        const minPrice = Math.max(cost * 1.1, cost + 1); // Mínimo 10% sobre costo o $1 más
+        const maxPrice = cost * 3; // Máximo 3x el costo
+        const suggestedPrice = cost * 1.5; // Precio sugerido 50% sobre costo
+        
+        const controlHtml = `
+            <div class="price-control-item">
+                <div class="price-control-header">
+                    <span class="price-control-title">${product.nombre}</span>
+                    <span class="price-control-current">Precio actual: $${currentPrice.toFixed(2)}</span>
+                </div>
+                <div class="price-slider-container">
+                    <input type="range" 
+                           class="price-slider" 
+                           id="slider_${product.id}"
+                           min="${minPrice.toFixed(2)}" 
+                           max="${maxPrice.toFixed(2)}" 
+                           step="0.01" 
+                           value="${currentPrice || suggestedPrice}"
+                           data-product-id="${product.id}">
+                    <input type="number" 
+                           class="price-input-field" 
+                           id="input_${product.id}"
+                           value="${currentPrice || suggestedPrice}"
+                           min="${minPrice.toFixed(2)}" 
+                           max="${maxPrice.toFixed(2)}" 
+                           step="0.01"
+                           data-product-id="${product.id}">
+                </div>
+                <div class="price-range-info">
+                    <span>Mín: $${minPrice.toFixed(2)}</span>
+                    <span>Sugerido: $${suggestedPrice.toFixed(2)}</span>
+                    <span>Máx: $${maxPrice.toFixed(2)}</span>
+                </div>
+            </div>
+        `;
+        
+        controlsContainer.insertAdjacentHTML('beforeend', controlHtml);
+    });
+    
+    // Configurar event listeners para los controles
+    setupPriceControlEvents();
+    
+    // Calcular impacto inicial
+    updatePriceImpact();
+}
+
+// Configurar eventos para los controles de precio
+function setupPriceControlEvents() {
+    const sliders = document.querySelectorAll('.price-slider');
+    const inputs = document.querySelectorAll('.price-input-field');
+    
+    sliders.forEach(slider => {
+        slider.addEventListener('input', function() {
+            const productId = this.dataset.productId;
+            const input = document.getElementById(`input_${productId}`);
+            input.value = this.value;
+            currentPrices[productId] = parseFloat(this.value);
+            updatePriceImpact();
+        });
+    });
+    
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const productId = this.dataset.productId;
+            const slider = document.getElementById(`slider_${productId}`);
+            slider.value = this.value;
+            currentPrices[productId] = parseFloat(this.value) || 0;
+            updatePriceImpact();
+        });
+    });
+}
+
+// Actualizar el impacto de los cambios de precio
+function updatePriceImpact() {
+    const products = businessData.costosVariables.productos || [];
+    const fixedCosts = businessData.costosFijos.total || 0;
+    
+    if (products.length === 0 || fixedCosts === 0) return;
+    
+    // Calcular nuevos promedios
+    let totalNewPrice = 0;
+    let totalCost = 0;
+    let productCount = 0;
+    
+    products.forEach(product => {
+        const newPrice = currentPrices[product.id] || 0;
+        const cost = product.costoTotal || 0;
+        
+        if (newPrice > 0 && cost > 0) {
+            totalNewPrice += newPrice;
+            totalCost += cost;
+            productCount++;
+        }
+    });
+    
+    if (productCount === 0) return;
+    
+    const avgNewPrice = totalNewPrice / productCount;
+    const avgCost = totalCost / productCount;
+    const newContributionMargin = avgNewPrice - avgCost;
+    
+    // Calcular nuevo punto de equilibrio
+    const newBreakEvenUnits = newContributionMargin > 0 ? fixedCosts / newContributionMargin : 0;
+    const newBreakEvenSales = newBreakEvenUnits * avgNewPrice;
+    
+    // Calcular margen promedio
+    const newAverageMargin = ((avgNewPrice - avgCost) / avgNewPrice) * 100;
+    
+    // Calcular cambio en ventas necesarias
+    const originalBreakEvenUnits = parseFloat(document.getElementById('unidadesEquilibrio').textContent) || 0;
+    const changeInUnits = newBreakEvenUnits - originalBreakEvenUnits;
+    const changeInSales = changeInUnits * avgNewPrice;
+    
+    // Actualizar elementos del DOM
+    const nuevoEquilibrioElement = document.getElementById('nuevoEquilibrio');
+    const nuevoMargenElement = document.getElementById('nuevoMargen');
+    const cambioVentasElement = document.getElementById('cambioVentas');
+    const viabilidadElement = document.getElementById('viabilidadActual');
+    
+    if (nuevoEquilibrioElement) {
+        nuevoEquilibrioElement.textContent = `${Math.ceil(newBreakEvenUnits)} unidades`;
+    }
+    
+    if (nuevoMargenElement) {
+        nuevoMargenElement.textContent = `${newAverageMargin.toFixed(1)}%`;
+        nuevoMargenElement.className = newAverageMargin >= 30 ? 'impact-value positive' : 'impact-value negative';
+    }
+    
+    if (cambioVentasElement) {
+        const changeText = changeInSales >= 0 ? `+$${changeInSales.toFixed(2)}` : `-$${Math.abs(changeInSales).toFixed(2)}`;
+        cambioVentasElement.textContent = changeText;
+        cambioVentasElement.className = changeInSales <= 0 ? 'impact-value positive' : 'impact-value negative';
+    }
+    
+    if (viabilidadElement) {
+        let viability = 'Excelente';
+        let viabilityClass = 'positive';
+        
+        if (newAverageMargin < 20) {
+            viability = 'Baja';
+            viabilityClass = 'negative';
+        } else if (newAverageMargin < 30) {
+            viability = 'Media';
+            viabilityClass = 'negative';
+        } else if (newAverageMargin < 50) {
+            viability = 'Buena';
+            viabilityClass = 'positive';
+        }
+        
+        viabilidadElement.textContent = viability;
+        viabilidadElement.className = `impact-value ${viabilityClass}`;
+    }
+}
+
+// Aplicar cambios de precio
+function aplicarCambiosPrecios() {
+    // Actualizar businessData con los nuevos precios
+    businessData.precios.productos = { ...currentPrices };
+    
+    // Guardar en sessionStorage
+    sessionStorage.setItem('businessData', JSON.stringify(businessData));
+    
+    // Recalcular análisis
+    calculateBreakEven();
+    calculateCashFlow();
+    calculateViabilityScore();
+    
+    // Actualizar precios originales
+    originalPrices = { ...currentPrices };
+    
+    // Mostrar mensaje de confirmación
+    alert('Los cambios de precio han sido aplicados exitosamente.');
+}
+
+// Restaurar precios originales
+function restaurarPreciosOriginales() {
+    currentPrices = { ...originalPrices };
+    
+    // Actualizar controles
+    Object.keys(currentPrices).forEach(productId => {
+        const slider = document.getElementById(`slider_${productId}`);
+        const input = document.getElementById(`input_${productId}`);
+        
+        if (slider) slider.value = currentPrices[productId];
+        if (input) input.value = currentPrices[productId];
+    });
+    
+    updatePriceImpact();
+    
+    alert('Los precios han sido restaurados a sus valores originales.');
+}
+
+// Optimizar precios automáticamente
+function optimizarPreciosAutomaticamente() {
+    const products = businessData.costosVariables.productos || [];
+    const fixedCosts = businessData.costosFijos.total || 0;
+    
+    if (products.length === 0 || fixedCosts === 0) {
+        alert('No hay suficientes datos para optimizar los precios.');
+        return;
+    }
+    
+    // Estrategia de optimización: buscar un margen promedio del 40%
+    const targetMargin = 0.4; // 40%
+    
+    products.forEach(product => {
+        const cost = product.costoTotal || 0;
+        if (cost > 0) {
+            // Calcular precio óptimo para 40% de margen
+            const optimalPrice = cost / (1 - targetMargin);
+            currentPrices[product.id] = optimalPrice;
+            
+            // Actualizar controles
+            const slider = document.getElementById(`slider_${product.id}`);
+            const input = document.getElementById(`input_${product.id}`);
+            
+            if (slider) slider.value = optimalPrice;
+            if (input) input.value = optimalPrice;
+        }
+    });
+    
+    updatePriceImpact();
+    
+    alert('Los precios han sido optimizados automáticamente para un margen promedio del 40%.');
 }

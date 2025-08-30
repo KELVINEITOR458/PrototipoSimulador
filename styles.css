@@ -3281,3 +3281,242 @@ input.error:focus, select.error:focus, textarea.error:focus {
         opacity: 1;
     }
 }
+
+/* Estilos para el switch de servicio a domicilio */
+.switch-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+/* Estilos para el panel de manipulación de precios */
+.price-manipulator-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 16px;
+}
+
+.price-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.price-control-item {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.price-control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.price-control-title {
+    font-weight: 600;
+    color: #495057;
+    font-size: 1rem;
+}
+
+.price-control-current {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.price-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.price-slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #e9ecef;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.price-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.price-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.price-input-field {
+    width: 80px;
+    padding: 6px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.875rem;
+}
+
+.price-range-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 4px;
+}
+
+.price-impact-panel {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.price-impact-panel h4 {
+    margin: 0 0 12px 0;
+    color: #495057;
+    font-size: 1rem;
+}
+
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.impact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.impact-item:last-child {
+    border-bottom: none;
+}
+
+.impact-item span:first-child {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.impact-value {
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.875rem;
+}
+
+.impact-value.positive {
+    color: #28a745;
+}
+
+.impact-value.negative {
+    color: #dc3545;
+}
+
+.price-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.price-actions .btn {
+    flex: 1;
+    min-width: 140px;
+}
+
+@media (max-width: 768px) {
+    .price-actions {
+        flex-direction: column;
+    }
+    
+    .price-actions .btn {
+        flex: none;
+    }
+    
+    .impact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.switch-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 14px;
+}
