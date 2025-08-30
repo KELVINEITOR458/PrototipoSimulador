@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Simulador de Negocios</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Simulador de Negocios</h1>
+            </div>
+            <nav class="nav">
+                <a href="dashboard.html" class="nav-link active">Dashboard</a>
+                <a href="mis-simulaciones.html" class="nav-link">Mis Simulaciones</a>
+                <div class="user-menu">
+                    <button class="user-menu-btn" onclick="toggleUserMenu()">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="userName">Usuario</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="perfil.html" class="dropdown-item">
+                            <i class="fas fa-user"></i> Mi Perfil
+                        </a>
+                        <a href="configuracion.html" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Configuración
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <div class="welcome-content">
+                    <h2>¡Bienvenido de vuelta, <span id="welcomeUserName">Usuario</span>!</h2>
+                    <p>Continúa con tus simulaciones o crea una nueva</p>
+                </div>
+                <div class="welcome-actions">
+                    <button class="btn btn-primary" onclick="window.location.href='configuracion.html'">
+                        <i class="fas fa-plus"></i>
+                        Nueva Simulación
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.href='mis-simulaciones.html'">
+                        <i class="fas fa-folder"></i>
+                        Ver Todas
+                    </button>
+                </div>
+            </section>
+
+            <!-- Quick Stats -->
+            <section class="stats-section">
+                <h3>Resumen Rápido</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalSimulaciones">0</div>
+                            <div class="stat-label">Simulaciones Totales</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="simulacionesMes">0</div>
+                            <div class="stat-label">Este Mes</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="mejorPuntuacion">0</div>
+                            <div class="stat-label">Mejor Puntuación</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="ultimaSimulacion">-</div>
+                            <div class="stat-label">Última Simulación</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Simulations -->
+            <section class="recent-section">
+                <div class="section-header">
+                    <h3>Simulaciones Recientes</h3>
+                    <a href="mis-simulaciones.html" class="btn btn-outline btn-sm">
+                        Ver Todas
+                    </a>
+                </div>
+                <div class="simulations-grid" id="recentSimulations">
+                    <!-- Las simulaciones se cargarán dinámicamente -->
+                </div>
+            </section>
+
+            <!-- Tips Section -->
+            <section class="tips-section">
+                <h3>Consejos del Día</h3>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="tip-content">
+                            <h4>Optimiza tus Costos</h4>
+                            <p>Revisa regularmente tus costos variables para mantener márgenes saludables.</p>
+                        </div>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="tip-content">
+                            <h4>Monitorea el Punto de Equilibrio</h4>
+                            <p>Conoce cuántas unidades necesitas vender para cubrir tus costos fijos.</p>
+                        </div>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="tip-content">
+                            <h4>Analiza tu Mercado</h4>
+                            <p>Investiga los precios de la competencia para posicionarte correctamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Simulador de Negocios. Desarrollado para emprendedores.</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

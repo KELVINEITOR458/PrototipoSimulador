@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Simulador de Negocios</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Simulador de Negocios</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Demo</a>
+                <a href="#" class="nav-link">Ayuda</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <i class="fas fa-user-plus"></i>
+                        <h2>Crear Cuenta</h2>
+                        <p>Únete para acceder a todas las funciones</p>
+                    </div>
+
+                    <form id="registerForm" class="auth-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-input" id="firstName" placeholder="Tu nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Apellido</label>
+                                <input type="text" class="form-input" id="lastName" placeholder="Tu apellido" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" id="email" placeholder="tu@email.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" class="form-input" id="password" placeholder="••••••••" required>
+                            <div class="form-help">Mínimo 8 caracteres</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Confirmar Contraseña</label>
+                            <input type="password" class="form-input" id="confirmPassword" placeholder="••••••••" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="terms" required>
+                                <span class="checkmark"></span>
+                                Acepto los <a href="#" class="auth-link">términos y condiciones</a>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="newsletter">
+                                <span class="checkmark"></span>
+                                Recibir notificaciones y actualizaciones
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full">
+                            <i class="fas fa-user-plus"></i>
+                            Crear Cuenta
+                        </button>
+                    </form>
+
+                    <div class="auth-divider">
+                        <span>o</span>
+                    </div>
+
+                    <div class="auth-options">
+                        <button class="btn btn-secondary btn-full" onclick="window.location.href='login.html'">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Ya tengo cuenta
+                        </button>
+                        
+                        <button class="btn btn-outline btn-full" onclick="window.location.href='index.html'">
+                            <i class="fas fa-play"></i>
+                            Probar Demo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="auth-features">
+                    <h3>Beneficios de crear una cuenta</h3>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="fas fa-infinity"></i>
+                            <div>
+                                <h4>Simulaciones Ilimitadas</h4>
+                                <p>Crea tantas simulaciones como necesites</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-download"></i>
+                            <div>
+                                <h4>Exportar Reportes</h4>
+                                <p>Descarga reportes en PDF y Excel</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-sync"></i>
+                            <div>
+                                <h4>Sincronización</h4>
+                                <p>Accede desde cualquier dispositivo</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-headset"></i>
+                            <div>
+                                <h4>Soporte Prioritario</h4>
+                                <p>Recibe ayuda personalizada</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Simulador de Negocios. Desarrollado para emprendedores.</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+</body>
+</html>
