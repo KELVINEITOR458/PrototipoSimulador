@@ -473,15 +473,13 @@ function validateVariableCosts() {
                 ingredientItems.forEach((item, ingIndex) => {
                     const nameInput = item.querySelector('.ingredient-name');
                     const priceInput = item.querySelector('.ingredient-price');
-                    const unitInput = item.querySelector('.ingredient-purchase-unit');
                     
-                    if (nameInput && priceInput && unitInput && nameInput.value.trim()) {
+                    if (nameInput && priceInput && nameInput.value.trim()) {
                         const ingredientName = nameInput.value.trim();
                         const price = parseFloat(priceInput.value) || 0;
-                        const unit = unitInput.value.trim();
                         
                         // Validar precio del ingrediente
-                        const priceValidation = validateIngredientPrice(ingredientName, price, unit);
+                        const priceValidation = validateIngredientPrice(ingredientName, price);
                         if (!priceValidation.isValid) {
                             validationErrors.push(`Producto ${index + 1} (${productName}) - ${ingredientName}: ${priceValidation.message}`);
                         }
@@ -505,8 +503,8 @@ function validateVariableCosts() {
     return true;
 }
 
-function validateIngredientPrice(ingredientName, price, unit) {
-    console.log('Validando precio de ingrediente:', ingredientName, price, unit);
+function validateIngredientPrice(ingredientName, price) {
+    console.log('Validando precio de ingrediente:', ingredientName, price);
     
     // Precios base por unidad en Ecuador (USD)
     const basePrices = {
@@ -557,18 +555,8 @@ function validateIngredientPrice(ingredientName, price, unit) {
     }
     
     if (!foundIngredient) {
-        // Si no se encuentra, usar rangos genéricos por unidad
-        const genericRanges = {
-            'kg': { min: 1.0, max: 10.0 },
-            'g': { min: 0.001, max: 0.01 },
-            'l': { min: 1.0, max: 8.0 },
-            'ml': { min: 0.001, max: 0.008 },
-            'docena': { min: 2.0, max: 6.0 },
-            'unidad': { min: 0.5, max: 5.0 }
-        };
-        
-        const genericRange = genericRanges[unit] || genericRanges['unidad'];
-        foundIngredient = { min: genericRange.min, max: genericRange.max, unit: unit, name: 'ingrediente genérico' };
+        // Si no se encuentra, usar rangos genéricos
+        foundIngredient = { min: 0.5, max: 10.0, unit: 'unidad', name: 'ingrediente genérico' };
     }
     
     // Validar precio
@@ -3066,33 +3054,7 @@ function validateVariableCostsWithAI() {
         const productName = product.querySelector('.product-name')?.value.trim();
         if (!productName) return;
         
-        // Validar unidades por plato
-        const unitsInput = product.querySelector('.product-units');
-        if (unitsInput) {
-            const unitsPerPlate = parseFloat(unitsInput.value) || 1;
-            
-            // Validar que las unidades por plato sean razonables
-            if (unitsPerPlate > 10) {
-                const message = `Las unidades por plato (${unitsPerPlate}) para "${productName}" parecen muy altas. Verifica que sea correcto.`;
-                showNotification(message, 'warning');
-                hasWarnings = true;
-            }
-            
-            // Validar consistencia con el nombre del producto
-            const normalizedName = productName.toLowerCase();
-            if (normalizedName.includes('hamburguesa') && unitsPerPlate > 2) {
-                const message = `Una hamburguesa típicamente se vende por unidad. Verifica las unidades por plato (${unitsPerPlate}).`;
-                showNotification(message, 'warning');
-                hasWarnings = true;
-            } else if (normalizedName.includes('taco') && unitsPerPlate < 2) {
-                const message = `Los tacos típicamente se venden en porciones de 2 o más. Considera aumentar las unidades por plato.`;
-                showNotification(message, 'info');
-            } else if (normalizedName.includes('pizza') && unitsPerPlate > 1) {
-                const message = `Una pizza típicamente se vende por unidad. Verifica las unidades por plato (${unitsPerPlate}).`;
-                showNotification(message, 'warning');
-                hasWarnings = true;
-            }
-        }
+
         
         let totalProductCost = 0;
         const ingredientItems = product.querySelectorAll('.ingredient-item');
@@ -4856,11 +4818,6 @@ function createProductHTML(productId) {
                     <div class="form-help">Escribe el nombre del plato. La IA analizará los ingredientes cuando hagas clic en "Analizar"</div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Unidades por Plato</label>
-                    <input type="number" class="form-input product-units" placeholder="1" data-product="${productId}" min="1" value="1">
-                    <div class="form-help">Cantidad de unidades que se venden por plato (ej: 1 hamburguesa, 2 tacos, etc.)</div>
-                </div>
-                <div class="form-group">
                     <label class="form-label">Tipo</label>
                     <select class="form-select product-type" data-product="${productId}">
                         <option value="comida">Comida</option>
@@ -4898,23 +4855,6 @@ function createProductHTML(productId) {
                             <div class="form-group">
                                 <label class="form-label">Precio por Unidad de Compra</label>
                                 <input type="number" class="form-input ingredient-price" placeholder="0" data-product="${productId}" data-ingredient="1" step="0.01">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Unidad de Compra</label>
-                                <select class="form-select ingredient-purchase-unit" data-product="${productId}" data-ingredient="1">
-                                    <option value="">Seleccionar unidad</option>
-                                    <option value="kg">Kilogramos (kg)</option>
-                                    <option value="g">Gramos (g)</option>
-                                    <option value="l">Litros (l)</option>
-                                    <option value="ml">Mililitros (ml)</option>
-                                    <option value="unidad">Unidad</option>
-                                    <option value="caja">Caja</option>
-                                    <option value="paquete">Paquete</option>
-                                    <option value="botella">Botella</option>
-                                    <option value="lata">Lata</option>
-                                    <option value="bolsa">Bolsa</option>
-                                    <option value="docena">Docena</option>
-                                </select>
                             </div>
                         </div>
                         <button type="button" class="btn-remove-ingredient" onclick="removeIngredient(${productId}, 1)">
@@ -5338,23 +5278,6 @@ function createIngredientHTML(productId, ingredientId) {
                 <div class="form-group">
                     <label class="form-label">Precio por Unidad de Compra</label>
                     <input type="number" class="form-input ingredient-price" placeholder="0" data-product="${productId}" data-ingredient="${ingredientId}" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Unidad de Compra</label>
-                    <select class="form-select ingredient-purchase-unit" data-product="${productId}" data-ingredient="${ingredientId}">
-                        <option value="">Seleccionar unidad</option>
-                        <option value="kg">Kilogramos (kg)</option>
-                        <option value="g">Gramos (g)</option>
-                        <option value="l">Litros (l)</option>
-                        <option value="ml">Mililitros (ml)</option>
-                        <option value="unidad">Unidad</option>
-                        <option value="caja">Caja</option>
-                        <option value="paquete">Paquete</option>
-                        <option value="botella">Botella</option>
-                        <option value="lata">Lata</option>
-                        <option value="bolsa">Bolsa</option>
-                        <option value="docena">Docena</option>
-                    </select>
                 </div>
             </div>
             <button type="button" class="btn-remove-ingredient" onclick="removeIngredient(${productId}, ${ingredientId})">

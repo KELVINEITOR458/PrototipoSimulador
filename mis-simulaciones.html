@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Simulaciones - Simulador de Negocios</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Simulador de Negocios</h1>
+            </div>
+            <nav class="nav">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="mis-simulaciones.html" class="nav-link active">Mis Simulaciones</a>
+                <div class="user-menu">
+                    <button class="user-menu-btn" onclick="toggleUserMenu()">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="userName">Usuario</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="configuracion.html" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Configuración
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Header Section -->
+            <section class="page-header">
+                <div class="header-content">
+                    <h2>Mis Simulaciones</h2>
+                    <p>Gestiona y revisa todas tus simulaciones de negocio</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="window.location.href='configuracion.html'">
+                        <i class="fas fa-plus"></i>
+                        Nueva Simulación
+                    </button>
+                </div>
+            </section>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="filters-content">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar simulaciones..." onkeyup="filterSimulations()">
+                    </div>
+                    <div class="filter-options">
+                        <select id="typeFilter" onchange="filterSimulations()">
+                            <option value="">Todos los tipos</option>
+                            <option value="restaurante">Restaurante</option>
+                            <option value="tienda">Tienda</option>
+                            <option value="servicio">Servicio</option>
+                            <option value="online">Online</option>
+                        </select>
+                        <select id="statusFilter" onchange="filterSimulations()">
+                            <option value="">Todos los estados</option>
+                            <option value="completada">Completada</option>
+                            <option value="en_proceso">En Proceso</option>
+                            <option value="borrador">Borrador</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Simulations Grid -->
+            <section class="simulations-section">
+                <div class="simulations-grid" id="simulationsGrid">
+                    <!-- Las simulaciones se cargarán dinámicamente -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Simulador de Negocios. Desarrollado para emprendedores.</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        // Cargar todas las simulaciones al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllSimulations();
+        });
+
+        function loadAllSimulations() {
+            const simulations = getSimulationsFromStorage();
+            const container = document.getElementById('simulationsGrid');
+            
+            if (simulations.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <h4>No hay simulaciones aún</h4>
+                        <p>Crea tu primera simulación para comenzar</p>
+                        <button class="btn btn-primary" onclick="window.location.href='configuracion.html'">
+                            <i class="fas fa-plus"></i>
+                            Crear Primera Simulación
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            simulations.forEach(simulation => {
+                html += createSimulationCard(simulation);
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function filterSimulations() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            const simulations = getSimulationsFromStorage();
+            const filteredSimulations = simulations.filter(simulation => {
+                const matchesSearch = simulation.name.toLowerCase().includes(searchTerm) ||
+                                    simulation.description?.toLowerCase().includes(searchTerm);
+                const matchesType = !typeFilter || simulation.businessType === typeFilter;
+                const matchesStatus = !statusFilter || simulation.status === statusFilter;
+                
+                return matchesSearch && matchesType && matchesStatus;
+            });
+            
+            const container = document.getElementById('simulationsGrid');
+            let html = '';
+            filteredSimulations.forEach(simulation => {
+                html += createSimulationCard(simulation);
+            });
+            
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -207,7 +207,7 @@ function logout() {
     localStorage.removeItem('rememberMe');
     
     // Redirigir al inicio
-            window.location.href = 'home.html';
+    window.location.href = 'home.html';
 }
 
 // Generar token (simulado)
@@ -347,7 +347,7 @@ function updateUIForDemoMode() {
     const nav = document.querySelector('.nav');
     if (nav) {
         nav.innerHTML = `
-                            <a href="home.html" class="nav-link">Inicio</a>
+            <a href="home.html" class="nav-link">Inicio</a>
             <a href="#" class="nav-link active">Demo</a>
             <a href="#" class="nav-link">Ayuda</a>
             <a href="login.html" class="nav-link">Versión Completa</a>
