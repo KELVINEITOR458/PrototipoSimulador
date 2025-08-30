@@ -1,185 +1,151 @@
-# Simulador de Negocios - Prototipo HTML
+# Simulador de Negocios - Versión SPA
 
-## Descripción
+Un simulador completo para evaluar la viabilidad de negocios de comida, ahora con una interfaz de una sola página (SPA) que no requiere recargas.
 
-Este es un prototipo completo de un simulador de negocios para emprendedores que quieren evaluar la viabilidad de su negocio de comida. El sistema guía al usuario paso a paso a través de un análisis completo que incluye:
+## 🚀 Características Principales
 
-- Configuración básica del negocio
-- Inversión inicial y financiamiento
-- Costos fijos mensuales
-- Costos variables (recetas)
-- Precios de venta
-- Análisis final y proyecciones
+### ✨ Nueva Versión SPA
+- **Navegación fluida**: Cambio entre pasos sin recargar la página
+- **Persistencia automática**: Los datos se guardan automáticamente mientras navegas
+- **Resúmenes dinámicos**: Ve un resumen de todos los pasos completados en cada página
+- **Barra de progreso**: Visualiza tu avance en tiempo real
 
-## Características Principales
+### 📊 Funcionalidades del Simulador
+- **Configuración del negocio**: Tipo, tamaño, ubicación
+- **Inversión inicial**: Gastos de montaje y financiamiento
+- **Costos fijos**: Arriendo, personal, servicios
+- **Costos variables**: Productos, ingredientes, mano de obra
+- **Precios de venta**: Con recomendaciones automáticas de IA
+- **Análisis final**: Punto de equilibrio, flujo de caja, viabilidad
 
-### 🎯 **Flujo Paso a Paso**
-- 6 pasos secuenciales con barra de progreso
-- Validaciones en tiempo real
-- Navegación intuitiva entre pasos
+### 🤖 Inteligencia Artificial
+- Recomendaciones de precios basadas en costos y tipo de negocio
+- Alertas automáticas sobre riesgos y oportunidades
+- Validaciones inteligentes de datos
+- Sugerencias de optimización
 
-### 🧮 **Cálculos Automáticos**
-- Cálculo de costos totales de inversión
-- Cálculo de costos fijos con cargas sociales
-- Cálculo de costos variables por producto
-- Punto de equilibrio automático
-- Flujo de caja proyectado
-
-### 🤖 **Validaciones Inteligentes**
-- Alertas de datos irrealistas
-- Sugerencias contextuales
-- Validaciones de mercado por ubicación
-- Análisis de rentabilidad por producto
-
-### 📊 **Análisis Completo**
-- Punto de equilibrio
-- Margen de ganancia
-- Flujo de caja a 12 meses
-- Puntuación de viabilidad
-- Recomendaciones personalizadas
-
-## Estructura del Proyecto
+## 📁 Estructura del Proyecto
 
 ```
-prot_1/
-├── index.html              # Página principal
-├── configuracion.html      # Paso 1: Configuración básica
-├── inversion.html          # Paso 2: Inversión inicial
-├── costos-fijos.html       # Paso 3: Costos fijos
-├── costos-variables.html   # Paso 4: Recetas y costos variables
-├── precios.html            # Paso 5: Precios de venta
-├── analisis.html           # Paso 6: Análisis final
-├── styles.css              # Estilos CSS completos
-├── script.js               # Funcionalidad JavaScript
-└── README.md               # Este archivo
+PrototipoSimulador/
+├── simulador.html          # Nueva página principal del simulador SPA
+├── simulador.js            # JavaScript específico para el simulador SPA
+├── home.html              # Página de inicio
+├── home.js                # JavaScript para la página de inicio
+├── index.html             # Página de login
+├── auth.js                # Sistema de autenticación
+├── styles.css             # Estilos CSS
+├── script.js              # Script original (para referencia)
+└── README.md              # Este archivo
 ```
 
-## Cómo Usar
+## 🎯 Cómo Usar
 
-### 1. **Inicio**
-- Abre `index.html` en tu navegador
-- Haz clic en "Nueva Simulación" para comenzar
+### 1. Página de Inicio
+- Abre `home.html` en tu navegador
+- Elige entre "Versión Completa" (con login) o "Probar Demo"
 
-### 2. **Configuración Básica**
-- Selecciona el tipo de negocio (restaurante, cafetería, bar, etc.)
-- Define ubicación y tamaño
-- Ingresa información básica del negocio
+### 2. Simulador SPA
+- Navega por los 6 pasos del simulador
+- Los datos se guardan automáticamente
+- Puedes regresar a pasos anteriores sin perder información
+- Ve resúmenes de pasos completados en cada página
 
-### 3. **Inversión Inicial**
-- Ingresa gastos de montaje (equipos, garantías, licencias)
-- Define fuentes de financiamiento
-- El sistema calcula automáticamente el resumen
+### 3. Pasos del Simulador
 
-### 4. **Costos Fijos**
-- Define arriendo, personal y servicios
-- El sistema calcula el costo real del personal
-- Incluye cargas sociales automáticamente
+#### Paso 1: Configuración
+- Selecciona tipo de negocio (Restaurante, Cafetería, Bar, Food Truck)
+- Define tamaño del local
+- Ingresa información básica
 
-### 5. **Costos Variables**
+#### Paso 2: Inversión Inicial
+- Gastos de montaje (equipos, mobiliario, licencias)
+- Fuentes de financiamiento
+- Cálculos automáticos de totales
+
+#### Paso 3: Costos Fijos
+- Arriendo y servicios
+- Personal y salarios
+- Otros gastos fijos mensuales
+
+#### Paso 4: Costos Variables
 - Define hasta 3 productos principales
-- Ingresa recetas con ingredientes y cantidades
-- Incluye mano de obra por producto
+- Ingredientes y costos por producto
+- Mano de obra por producto
 
-### 6. **Precios de Venta**
-- Define precios por producto
-- Recibe validaciones de mercado
-- Análisis de rentabilidad automático
+#### Paso 5: Precios de Venta
+- Precios recomendados por IA
+- Análisis de márgenes
+- Recomendaciones de optimización
 
-### 7. **Análisis Final**
-- Proyecciones de ventas mensuales
-- Punto de equilibrio calculado
-- Flujo de caja a 12 meses
-- Decisión final con puntuación
+#### Paso 6: Análisis Final
+- Puntuación de viabilidad
+- Punto de equilibrio
+- Proyecciones de flujo de caja
+- Decisión final con razonamiento
 
-## Funcionalidades Técnicas
-
-### **Cálculos Automáticos**
-- **Inversión**: Suma automática de gastos y financiamiento
-- **Costos Fijos**: Cálculo de cargas sociales (38% adicional)
-- **Costos Variables**: Conversión de unidades y costos por producto
-- **Punto de Equilibrio**: Cálculo automático basado en costos fijos y margen
-
-### **Validaciones**
-- Rangos realistas para precios de mercado
-- Validación de capacidad vs proyecciones
-- Alertas de datos inconsistentes
-- Sugerencias contextuales por ubicación
-
-### **Interfaz Responsiva**
-- Diseño moderno y atractivo
-- Compatible con móviles y tablets
-- Navegación intuitiva
-- Feedback visual inmediato
-
-## Tecnologías Utilizadas
+## 🔧 Tecnologías Utilizadas
 
 - **HTML5**: Estructura semántica
 - **CSS3**: Estilos modernos con variables CSS
-- **JavaScript**: Funcionalidad interactiva
-- **Font Awesome**: Iconos
-- **Diseño Responsivo**: Mobile-first approach
+- **JavaScript ES6+**: Lógica del simulador
+- **SessionStorage**: Persistencia de datos
+- **Font Awesome**: Iconografía
 
-## Características de Diseño
+## 💾 Persistencia de Datos
 
-### **Paleta de Colores**
-- Azul primario: `#2563eb`
-- Gris secundario: `#64748b`
-- Verde éxito: `#10b981`
-- Rojo error: `#ef4444`
-- Amarillo advertencia: `#f59e0b`
+El simulador utiliza `sessionStorage` para:
+- Guardar datos automáticamente mientras navegas
+- Mantener información entre pasos
+- Limpiar datos solo al recargar completamente la página
 
-### **Tipografía**
-- Fuente principal: Inter (sistema)
-- Jerarquía clara de títulos
-- Legibilidad optimizada
+## 🎨 Características de Diseño
 
-### **Componentes**
-- Cards con sombras suaves
-- Botones con estados hover
-- Formularios con validación visual
-- Alertas contextuales
-- Gráficos y métricas visuales
+- **Responsive**: Funciona en móviles y tablets
+- **Accesible**: Navegación por teclado y lectores de pantalla
+- **Moderno**: Diseño limpio y profesional
+- **Intuitivo**: Interfaz fácil de usar
 
-## Limitaciones del Prototipo
+## 🚀 Instalación y Uso
 
-Este es un prototipo funcional que demuestra el flujo completo. Algunas limitaciones:
+1. **Clona o descarga** el proyecto
+2. **Abre** `home.html` en tu navegador
+3. **Haz clic** en "Probar Demo" para usar el simulador
+4. **Navega** por los pasos y completa la información
+5. **Revisa** el análisis final y las recomendaciones
 
-- **Sin Backend**: Los datos no se guardan permanentemente
-- **Sin IA Real**: Las validaciones son simuladas
-- **Sin Base de Datos**: No hay persistencia de datos
-- **Sin Autenticación**: No hay sistema de usuarios
+## 🔄 Migración desde la Versión Anterior
 
-## Próximos Pasos
+Si tienes datos guardados en la versión anterior:
+- Los datos se mantienen en `sessionStorage`
+- Puedes continuar desde donde lo dejaste
+- La nueva versión es compatible con datos existentes
 
-Para convertir esto en una aplicación completa:
+## 📝 Notas de Desarrollo
 
-1. **Backend**: API REST con Node.js/Python
-2. **Base de Datos**: PostgreSQL/MongoDB
-3. **Autenticación**: Sistema de usuarios
-4. **IA Real**: Integración con APIs de IA
-5. **Reportes**: Generación de PDFs
-6. **Móvil**: App nativa o PWA
+### Archivos Principales
+- `simulador.html`: Contiene todos los formularios en una sola página
+- `simulador.js`: Maneja la navegación y lógica del SPA
+- `styles.css`: Incluye estilos específicos para el simulador SPA
 
-## Instalación y Uso
+### Funciones Clave
+- `nextStep()` / `previousStep()`: Navegación entre pasos
+- `showStep()`: Muestra/oculta pasos
+- `saveToStorage()`: Guarda datos automáticamente
+- `generateStepSummaries()`: Crea resúmenes dinámicos
 
-1. Descarga todos los archivos en una carpeta
-2. Abre `index.html` en tu navegador
-3. ¡Comienza a simular tu negocio!
+## 🤝 Contribuciones
 
-## Contribución
-
-Este es un prototipo educativo. Si quieres contribuir:
-
-1. Fork el proyecto
+Para contribuir al proyecto:
+1. Fork el repositorio
 2. Crea una rama para tu feature
-3. Commit tus cambios
-4. Push a la rama
-5. Abre un Pull Request
+3. Haz commit de tus cambios
+4. Abre un Pull Request
 
-## Licencia
+## 📄 Licencia
 
-Este proyecto es educativo y está disponible para uso libre.
+Este proyecto está desarrollado para emprendedores y es de uso libre.
 
 ---
 
-**Desarrollado para emprendedores que quieren tomar decisiones informadas sobre sus negocios.**
+**¡Disfruta simulando tu negocio! 🚀**

@@ -11,28 +11,69 @@ let businessData = {
     proyecciones: {}
 };
 
+// Sistema de persistencia de datos
+const STORAGE_KEY = 'businessData';
+const STEP_SUMMARY_KEY = 'stepSummaries';
+
 // Inicialización
 document.addEventListener('DOMContentLoaded', function() {
+    // Limpiar storage solo en recarga completa
+    setupStorageCleanup();
     initializeApp();
 });
 
-// Cargar datos guardados
-function loadSavedData() {
-    const savedData = sessionStorage.getItem('businessData');
-    if (savedData) {
-        try {
-            const savedBusinessData = JSON.parse(savedData);
-            // Fusionar datos guardados con businessData actual
-            businessData = { ...businessData, ...savedBusinessData };
-        } catch (error) {
-            console.error('Error al cargar datos guardados:', error);
-        }
+// Sistema de persistencia de datos
+function saveToStorage() {
+    try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(businessData));
+        console.log('Datos guardados en sessionStorage:', businessData);
+    } catch (error) {
+        console.error('Error al guardar datos:', error);
     }
+}
+
+function loadFromStorage() {
+    try {
+        const savedData = sessionStorage.getItem(STORAGE_KEY);
+        if (savedData) {
+            const savedBusinessData = JSON.parse(savedData);
+            businessData = { ...businessData, ...savedBusinessData };
+            console.log('Datos cargados desde sessionStorage:', businessData);
+            return true;
+        }
+    } catch (error) {
+        console.error('Error al cargar datos:', error);
+    }
+    return false;
+}
+
+function clearStorage() {
+    sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(STEP_SUMMARY_KEY);
+    businessData = {
+        configuracion: {},
+        inversion: {},
+        costosFijos: {},
+        costosVariables: {},
+        precios: {},
+        proyecciones: {}
+    };
+}
+
+// Cargar datos guardados (mantener compatibilidad)
+function loadSavedData() {
+    return loadFromStorage();
 }
 
 function initializeApp() {
     // Cargar datos guardados
     loadSavedData();
+    
+    // Cargar datos en formularios
+    populateFormData();
+    
+    // Generar resúmenes de pasos anteriores
+    generateStepSummaries();
     
     // Configurar eventos para selección de tipo de negocio
     setupBusinessTypeSelection();
@@ -57,6 +98,260 @@ function initializeApp() {
     
     // Configurar eventos de navegación
     setupNavigationEvents();
+    
+    // Configurar eventos de guardado automático
+    setupAutoSave();
+}
+
+// Poblar formularios con datos guardados
+function populateFormData() {
+    console.log('Poblando formularios con datos:', businessData);
+    
+    // Poblar inversión
+    if (businessData.inversion.gastos) {
+        Object.keys(businessData.inversion.gastos).forEach(key => {
+            const input = document.querySelector(`[data-category="${key}"].expense-input`);
+            if (input) {
+                input.value = businessData.inversion.gastos[key];
+            }
+        });
+        calculateTotalExpenses();
+    }
+    
+    // Poblar costos fijos
+    if (businessData.costosFijos.gastos) {
+        Object.keys(businessData.costosFijos.gastos).forEach(key => {
+            const input = document.querySelector(`[data-category="${key}"].fixed-cost-input`);
+            if (input) {
+                input.value = businessData.costosFijos.gastos[key];
+            }
+        });
+        calculateTotalFixedCosts();
+    }
+    
+    // Poblar staff
+    if (businessData.costosFijos.staff) {
+        Object.keys(businessData.costosFijos.staff).forEach(key => {
+            const input = document.querySelector(`[data-role="${key}"].staff-input`);
+            if (input) {
+                input.value = businessData.costosFijos.staff[key];
+            }
+        });
+        calculateStaffCosts();
+    }
+    
+    // Poblar servicios
+    if (businessData.costosFijos.servicios) {
+        Object.keys(businessData.costosFijos.servicios).forEach(key => {
+            const input = document.querySelector(`[data-service="${key}"].service-input`);
+            if (input) {
+                input.value = businessData.costosFijos.servicios[key];
+            }
+        });
+        calculateTotalServices();
+    }
+    
+    // Poblar selects de configuración
+    if (businessData.configuracion.tipoNegocio) {
+        const businessOption = document.querySelector(`[data-type="${businessData.configuracion.tipoNegocio}"]`);
+        if (businessOption) {
+            document.querySelectorAll('.business-option').forEach(opt => opt.classList.remove('selected'));
+            businessOption.classList.add('selected');
+        }
+    }
+    
+    if (businessData.configuracion.categoriaTamaño) {
+        const sizeOption = document.querySelector(`[data-size="${businessData.configuracion.categoriaTamaño}"]`);
+        if (sizeOption) {
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('selected'));
+            sizeOption.classList.add('selected');
+        }
+    }
+    
+    // Poblar otros selects
+    if (businessData.costosFijos.serviciosArriendo) {
+        const serviciosArriendoSelect = document.getElementById('serviciosArriendo');
+        if (serviciosArriendoSelect) {
+            serviciosArriendoSelect.value = businessData.costosFijos.serviciosArriendo;
+        }
+    }
+    
+    // Poblar productos (costos variables)
+    if (businessData.costosVariables.productos && businessData.costosVariables.productos.length > 0) {
+        generateProductCards();
+    }
+    
+    // Poblar precios
+    if (businessData.precios.productos) {
+        Object.keys(businessData.precios.productos).forEach(productId => {
+            const priceInput = document.querySelector(`[data-product="${productId}"].price-input`);
+            if (priceInput) {
+                priceInput.value = businessData.precios.productos[productId];
+            }
+        });
+    }
+}
+
+// Generar resúmenes de pasos anteriores
+function generateStepSummaries() {
+    const currentPage = getCurrentPage();
+    const summaries = [];
+    
+    // Resumen de configuración (paso 1)
+    if (businessData.configuracion.tipoNegocio) {
+        summaries.push({
+            step: 1,
+            title: 'Configuración del Negocio',
+            data: {
+                tipo: businessData.configuracion.tipoNegocio,
+                tamaño: businessData.configuracion.categoriaTamaño || 'No especificado'
+            }
+        });
+    }
+    
+    // Resumen de inversión (paso 2)
+    if (businessData.inversion.totalGastos && businessData.inversion.totalGastos > 0) {
+        summaries.push({
+            step: 2,
+            title: 'Inversión Inicial',
+            data: {
+                total: businessData.inversion.totalGastos
+            }
+        });
+    }
+    
+    // Resumen de costos fijos (paso 3)
+    if (businessData.costosFijos.total && businessData.costosFijos.total > 0) {
+        summaries.push({
+            step: 3,
+            title: 'Costos Fijos Mensuales',
+            data: {
+                total: businessData.costosFijos.total
+            }
+        });
+    }
+    
+    // Resumen de costos variables (paso 4)
+    if (businessData.costosVariables.productos && businessData.costosVariables.productos.length > 0) {
+        summaries.push({
+            step: 4,
+            title: 'Productos/Servicios',
+            data: {
+                cantidad: businessData.costosVariables.productos.length,
+                totalCosto: businessData.costosVariables.totalCosto || 0
+            }
+        });
+    }
+    
+    // Resumen de precios (paso 5)
+    if (businessData.precios.productos && Object.keys(businessData.precios.productos).length > 0) {
+        summaries.push({
+            step: 5,
+            title: 'Precios de Venta',
+            data: {
+                productos: Object.keys(businessData.precios.productos).length
+            }
+        });
+    }
+    
+    // Mostrar resúmenes en la página actual
+    displayStepSummaries(summaries, currentPage);
+}
+
+// Mostrar resúmenes en la página
+function displayStepSummaries(summaries, currentPage) {
+    const summaryContainer = document.querySelector('.step-summaries');
+    if (!summaryContainer || summaries.length === 0) return;
+    
+    let html = '<div class="summaries-header"><h4>Resumen de Pasos Completados</h4></div>';
+    
+    summaries.forEach(summary => {
+        if (summary.step < currentPage) {
+            html += createSummaryCard(summary);
+        }
+    });
+    
+    summaryContainer.innerHTML = html;
+}
+
+// Crear tarjeta de resumen
+function createSummaryCard(summary) {
+    let details = '';
+    
+    switch (summary.step) {
+        case 1:
+            details = `
+                <div class="summary-detail">
+                    <span class="detail-label">Tipo:</span>
+                    <span class="detail-value">${summary.data.tipo}</span>
+                </div>
+                <div class="summary-detail">
+                    <span class="detail-label">Tamaño:</span>
+                    <span class="detail-value">${summary.data.tamaño}</span>
+                </div>
+            `;
+            break;
+        case 2:
+            details = `
+                <div class="summary-detail">
+                    <span class="detail-label">Inversión Total:</span>
+                    <span class="detail-value">$${summary.data.total.toFixed(2)}</span>
+                </div>
+            `;
+            break;
+        case 3:
+            details = `
+                <div class="summary-detail">
+                    <span class="detail-label">Costos Fijos:</span>
+                    <span class="detail-value">$${summary.data.total.toFixed(2)}/mes</span>
+                </div>
+            `;
+            break;
+        case 4:
+            details = `
+                <div class="summary-detail">
+                    <span class="detail-label">Productos:</span>
+                    <span class="detail-value">${summary.data.cantidad}</span>
+                </div>
+                <div class="summary-detail">
+                    <span class="detail-label">Costo Total:</span>
+                    <span class="detail-value">$${summary.data.totalCosto.toFixed(2)}</span>
+                </div>
+            `;
+            break;
+        case 5:
+            details = `
+                <div class="summary-detail">
+                    <span class="detail-label">Productos con Precio:</span>
+                    <span class="detail-value">${summary.data.productos}</span>
+                </div>
+            `;
+            break;
+    }
+    
+    return `
+        <div class="summary-card step-${summary.step}">
+            <div class="summary-header">
+                <span class="step-number">${summary.step}</span>
+                <h5>${summary.title}</h5>
+            </div>
+            <div class="summary-content">
+                ${details}
+            </div>
+        </div>
+    `;
+}
+
+// Obtener página actual
+function getCurrentPage() {
+    const path = window.location.pathname;
+    if (path.includes('configuracion.html')) return 1;
+    if (path.includes('inversion.html')) return 2;
+    if (path.includes('costos-fijos.html')) return 3;
+    if (path.includes('costos-variables.html')) return 4;
+    if (path.includes('precios.html')) return 5;
+    if (path.includes('analisis.html')) return 6;
+    return 1;
 }
 
 // Selección de tipo de negocio
@@ -72,6 +367,9 @@ function setupBusinessTypeSelection() {
             // Guardar selección
             const businessType = this.dataset.type;
             businessData.configuracion.tipoNegocio = businessType;
+            
+            // Guardar automáticamente
+            saveToStorage();
         });
     });
 }
@@ -86,8 +384,128 @@ function setupSizeSelection() {
             
             const size = this.dataset.size;
             businessData.configuracion.categoriaTamaño = size;
+            
+            // Guardar automáticamente
+            saveToStorage();
         });
     });
+}
+
+// Configurar guardado automático
+function setupAutoSave() {
+    // Guardar en cambios de inputs
+    document.addEventListener('input', function(e) {
+        if (e.target.matches('input[type="number"], input[type="text"], textarea, select')) {
+            // Debounce para no guardar en cada tecla
+            clearTimeout(window.autoSaveTimeout);
+            window.autoSaveTimeout = setTimeout(() => {
+                updateBusinessDataFromForm();
+                saveToStorage();
+            }, 500);
+        }
+    });
+    
+    // Guardar cuando se pierde el foco de un input
+    document.addEventListener('blur', function(e) {
+        if (e.target.matches('input[type="number"], input[type="text"], textarea, select')) {
+            updateBusinessDataFromForm();
+            saveToStorage();
+        }
+    }, true);
+    
+    // Guardar cuando se cambia un select
+    document.addEventListener('change', function(e) {
+        if (e.target.matches('select')) {
+            updateBusinessDataFromForm();
+            saveToStorage();
+        }
+    });
+    
+    // Guardar antes de cerrar la página
+    window.addEventListener('beforeunload', function() {
+        updateBusinessDataFromForm();
+        saveToStorage();
+    });
+}
+
+// Actualizar businessData desde formularios
+function updateBusinessDataFromForm() {
+    // Actualizar inversión
+    const expenseInputs = document.querySelectorAll('.expense-input');
+    if (expenseInputs.length > 0) {
+        if (!businessData.inversion.gastos) businessData.inversion.gastos = {};
+        expenseInputs.forEach(input => {
+            const key = input.dataset.category;
+            if (key) {
+                businessData.inversion.gastos[key] = parseFloat(input.value) || 0;
+            }
+        });
+    }
+    
+    // Actualizar costos fijos
+    const fixedCostInputs = document.querySelectorAll('.fixed-cost-input');
+    if (fixedCostInputs.length > 0) {
+        if (!businessData.costosFijos.gastos) businessData.costosFijos.gastos = {};
+        fixedCostInputs.forEach(input => {
+            const key = input.dataset.category;
+            if (key) {
+                businessData.costosFijos.gastos[key] = parseFloat(input.value) || 0;
+            }
+        });
+    }
+    
+    // Actualizar staff inputs
+    const staffInputs = document.querySelectorAll('.staff-input');
+    if (staffInputs.length > 0) {
+        if (!businessData.costosFijos.staff) businessData.costosFijos.staff = {};
+        staffInputs.forEach(input => {
+            const key = input.dataset.role;
+            if (key) {
+                businessData.costosFijos.staff[key] = parseFloat(input.value) || 0;
+            }
+        });
+    }
+    
+    // Actualizar service inputs
+    const serviceInputs = document.querySelectorAll('.service-input');
+    if (serviceInputs.length > 0) {
+        if (!businessData.costosFijos.servicios) businessData.costosFijos.servicios = {};
+        serviceInputs.forEach(input => {
+            const key = input.dataset.service;
+            if (key) {
+                businessData.costosFijos.servicios[key] = parseFloat(input.value) || 0;
+            }
+        });
+    }
+    
+    // Actualizar precios
+    const priceInputs = document.querySelectorAll('.price-input');
+    if (priceInputs.length > 0) {
+        if (!businessData.precios.productos) businessData.precios.productos = {};
+        priceInputs.forEach(input => {
+            const productId = input.dataset.product;
+            if (productId) {
+                businessData.precios.productos[productId] = parseFloat(input.value) || 0;
+            }
+        });
+    }
+    
+    // Actualizar selects de configuración
+    const businessTypeSelect = document.querySelector('.business-option.selected');
+    if (businessTypeSelect) {
+        businessData.configuracion.tipoNegocio = businessTypeSelect.dataset.type;
+    }
+    
+    const sizeSelect = document.querySelector('.size-option.selected');
+    if (sizeSelect) {
+        businessData.configuracion.categoriaTamaño = sizeSelect.dataset.size;
+    }
+    
+    // Actualizar otros selects importantes
+    const serviciosArriendoSelect = document.getElementById('serviciosArriendo');
+    if (serviciosArriendoSelect) {
+        businessData.costosFijos.serviciosArriendo = serviciosArriendoSelect.value;
+    }
 }
 
 // Cálculos automáticos
@@ -129,6 +547,9 @@ function calculateTotalExpenses() {
     businessData.inversion.totalGastos = total;
     
     calculateInvestmentSummary();
+    
+    // Guardar automáticamente
+    saveToStorage();
 }
 
 // Cálculo de financiamiento total
@@ -236,6 +657,9 @@ function calculateTotalFixedCosts() {
     document.getElementById('totalCostosFijos').textContent = `$${total.toFixed(2)}`;
     
     businessData.costosFijos.total = total;
+    
+    // Guardar automáticamente
+    saveToStorage();
 }
 
 // Validaciones de formularios
@@ -1059,7 +1483,7 @@ function updateProductSummary() {
     if (productoMayorCostoElement) productoMayorCostoElement.textContent = maxCostProduct;
     
     // Guardar datos en sessionStorage para persistencia entre páginas
-    sessionStorage.setItem('businessData', JSON.stringify(businessData));
+    saveToStorage();
 }
 
 // Funciones para precios
@@ -1173,7 +1597,7 @@ function savePricingData() {
     });
     
     // Guardar en sessionStorage
-    sessionStorage.setItem('businessData', JSON.stringify(businessData));
+    saveToStorage();
 }
 
 // Calcular precio recomendado basado en el costo y tipo de producto
@@ -1285,7 +1709,7 @@ function saveCurrentPageData() {
     }
     
     // Guardar en sessionStorage
-    sessionStorage.setItem('businessData', JSON.stringify(businessData));
+    saveToStorage();
 }
 
 function generateAIRecommendations() {
@@ -1706,4 +2130,13 @@ function exportarReporte() {
     
     // Simular exportación
     alert('Reporte exportado como PDF.');
+}
+
+// Función para limpiar storage al recargar la página
+function setupStorageCleanup() {
+    // Limpiar storage solo si es una recarga completa (no navegación interna)
+    if (performance.navigation.type === 1) { // 1 = reload
+        clearStorage();
+        console.log('Storage limpiado por recarga de página');
+    }
 }

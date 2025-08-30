@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Negocios</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Simulador de Negocios</h1>
+            </div>
+            <nav class="nav">
+                <a href="home.html" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Mis Simulaciones</a>
+                <a href="#" class="nav-link">Ayuda</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <!-- Paso 1: Configuración -->
+            <div class="form-step" id="step1" data-step="1">
+                <div class="form-container">
+                    <!-- Botón para mostrar resumen de pasos -->
+                    <div class="summary-button-container">
+                        <button type="button" class="btn btn-outline-primary" id="showSummaryBtn" onclick="toggleSummaryModal()">
+                            <i class="fas fa-list-alt"></i> Ver Resumen de Pasos Completados
+                        </button>
+                    </div>
+                    
+                    <div class="form-header">
+                        <div class="header-content">
+                            <div class="header-left">
+                                <i class="fas fa-cog"></i>
+                                <h2>Paso 1: Configuración del Negocio</h2>
+                            </div>
+                            <div class="header-right">
+                                <button type="button" class="btn btn-outline-secondary" onclick="autoCompleteStep(1)">
+                                    <i class="fas fa-magic"></i> Autocompletar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Configuración Inicial</strong> Define las características básicas de tu negocio para personalizar el análisis.
+                        </div>
+                    </div>
+
+                    <form id="configForm">
+                        <!-- Tipo de Negocio -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-store"></i> Tipo de Negocio</h3>
+                            <div class="business-options">
+                                <div class="business-option" data-type="restaurante">
+                                    <i class="fas fa-utensils"></i>
+                                    <h4>Restaurante</h4>
+                                    <p>Comida rápida, casual o gourmet</p>
+                                </div>
+                                <div class="business-option" data-type="cafeteria">
+                                    <i class="fas fa-coffee"></i>
+                                    <h4>Cafetería</h4>
+                                    <p>Café, bebidas y snacks</p>
+                                </div>
+                                <div class="business-option" data-type="bar">
+                                    <i class="fas fa-glass-martini"></i>
+                                    <h4>Bar</h4>
+                                    <p>Bebidas alcohólicas y snacks</p>
+                                </div>
+                                <div class="business-option" data-type="foodtruck">
+                                    <i class="fas fa-truck"></i>
+                                    <h4>Food Truck</h4>
+                                    <p>Comida móvil</p>
+                                </div>
+                            </div>
+                            <div class="form-error" id="businessTypeError" style="display: none;">
+                                Selecciona un tipo de negocio
+                            </div>
+                        </div>
+
+                        <!-- Tamaño del Negocio -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-ruler-combined"></i> Tamaño del Negocio</h3>
+                            <div class="size-options">
+                                <div class="size-option" data-size="pequeño">
+                                    <i class="fas fa-home"></i>
+                                    <h4>Pequeño</h4>
+                                    <p>Hasta 50m², 20 personas</p>
+                                </div>
+                                <div class="size-option" data-size="mediano">
+                                    <i class="fas fa-building"></i>
+                                    <h4>Mediano</h4>
+                                    <p>50-150m², 20-50 personas</p>
+                                </div>
+                                <div class="size-option" data-size="grande">
+                                    <i class="fas fa-warehouse"></i>
+                                    <h4>Grande</h4>
+                                    <p>150m²+, 50+ personas</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información Adicional -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-info-circle"></i> Información Adicional</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="businessName">Nombre del Negocio</label>
+                                    <input type="text" id="businessName" class="form-input" placeholder="Ej: Mi Restaurante">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="location">Ubicación en Pichincha</label>
+                                    <input type="text" id="location" class="form-input" placeholder="Ej: Centro Histórico de Quito, Cumbayá, La Mariscal..." required>
+                                    <div class="form-help">Escribe la ubicación específica. La IA analizará tu texto y aplicará los multiplicadores correctos</div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="size">Tamaño del Local (m²)</label>
+                                    <input type="number" id="size" class="form-input" placeholder="100" min="10" max="1000">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="capacity">Capacidad de Personas</label>
+                                    <input type="number" id="capacity" class="form-input" placeholder="30" min="5" max="200">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="description">Descripción del Negocio</label>
+                                <textarea id="description" class="form-input" rows="3" placeholder="Describe tu concepto de negocio..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Navegación -->
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">
+                                Siguiente <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Paso 2: Inversión -->
+            <div class="form-step" id="step2" data-step="2">
+                <div class="form-container">
+                    <!-- Botón para mostrar resumen de pasos -->
+                    <div class="summary-button-container">
+                        <button type="button" class="btn btn-outline-primary" id="showSummaryBtn" onclick="toggleSummaryModal()">
+                            <i class="fas fa-list-alt"></i> Ver Resumen de Pasos Completados
+                        </button>
+                    </div>
+                    
+                    <div class="form-header">
+                        <div class="header-content">
+                            <div class="header-left">
+                                <i class="fas fa-dollar-sign"></i>
+                                <h2>Paso 2: Inversión Inicial</h2>
+                            </div>
+                            <div class="header-right">
+                                <button type="button" class="btn btn-outline-secondary" onclick="autoCompleteStep(2)">
+                                    <i class="fas fa-magic"></i> Autocompletar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Inversión Inicial</strong> Son todos los gastos necesarios para montar tu negocio 
+                            antes de abrir las puertas. Incluye equipos, garantías, licencias y más.
+                        </div>
+                    </div>
+
+                    <form id="inversionForm">
+                        <!-- Gastos de Montaje -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-tools"></i> Gastos de Montaje</h3>
+                            
+                            <div class="expense-items">
+                                <div class="expense-item">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">Garantía de Arriendo</label>
+                                            <input type="number" class="form-input expense-input" data-category="garantia" placeholder="0" min="0">
+                                            <div class="form-help">Generalmente 2 meses de arriendo</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Equipos de Cocina</label>
+                                            <input type="number" class="form-input expense-input" data-category="equipos" placeholder="0" min="0">
+                                            <div class="form-help">Cocinas, refrigeradores, utensilios</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="expense-item">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">Mobiliario</label>
+                                            <input type="number" class="form-input expense-input" data-category="mobiliario" placeholder="0" min="0">
+                                            <div class="form-help">Mesas, sillas, mostradores</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Decoración</label>
+                                            <input type="number" class="form-input expense-input" data-category="decoracion" placeholder="0" min="0">
+                                            <div class="form-help">Pintura, iluminación, elementos decorativos</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="expense-item">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">Licencias y Permisos</label>
+                                            <input type="number" class="form-input expense-input" data-category="licencias" placeholder="0" min="0">
+                                            <div class="form-help">Municipales, sanitarios, alcohol</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Sistema POS</label>
+                                            <input type="number" class="form-input expense-input" data-category="pos" placeholder="0" min="0">
+                                            <div class="form-help">Caja registradora, software</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <!-- Financiamiento -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-piggy-bank"></i> Financiamiento</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Capital Propio</label>
+                                    <input type="number" class="form-input funding-input" data-category="capital" placeholder="0" min="0">
+                                    <div class="form-help">Dinero que tienes disponible</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Préstamos Bancarios</label>
+                                    <input type="number" class="form-input funding-input" data-category="prestamos" placeholder="0" min="0">
+                                    <div class="form-help">Préstamos solicitados</div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Inversores</label>
+                                    <input type="number" class="form-input funding-input" data-category="inversores" placeholder="0" min="0">
+                                    <div class="form-help">Dinero de socios o inversores</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Otros</label>
+                                    <input type="number" class="form-input funding-input" data-category="otros" placeholder="0" min="0">
+                                    <div class="form-help">Otras fuentes de financiamiento</div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <!-- Navegación -->
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-secondary" onclick="previousStep()">
+                                <i class="fas fa-arrow-left"></i> Anterior
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">
+                                Siguiente <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Paso 3: Costos Fijos -->
+            <div class="form-step" id="step3" data-step="3">
+                <div class="form-container">
+                    <!-- Botón para mostrar resumen de pasos -->
+                    <div class="summary-button-container">
+                        <button type="button" class="btn btn-outline-primary" id="showSummaryBtn" onclick="toggleSummaryModal()">
+                            <i class="fas fa-list-alt"></i> Ver Resumen de Pasos Completados
+                        </button>
+                    </div>
+                    
+                    <div class="form-header">
+                        <div class="header-content">
+                            <div class="header-left">
+                                <i class="fas fa-anchor"></i>
+                                <h2>Paso 3: Costos Fijos</h2>
+                            </div>
+                            <div class="header-right">
+                                <button type="button" class="btn btn-outline-secondary" onclick="autoCompleteStep(3)">
+                                    <i class="fas fa-magic"></i> Autocompletar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Costos Fijos</strong> Son gastos que debes pagar mensualmente sin importar cuánto vendas. 
+                            Incluyen arriendo, salarios, servicios básicos y otros gastos operativos.
+                        </div>
+                    </div>
+
+                    <form id="costosFijosForm">
+                        <!-- Arriendo -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-building"></i> Arriendo</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="arriendo">Arriendo Mensual *</label>
+                                    <input type="number" id="arriendo" class="form-input fixed-cost-input" data-category="arriendo" placeholder="0" min="0">
+                                    <div class="form-help">Costo mensual del local</div>
+                                    <div class="form-error" id="arriendoError" style="display: none;">
+                                        Ingresa el monto del arriendo
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="serviciosArriendo">Servicios Incluidos</label>
+                                    <select id="serviciosArriendo" class="form-select">
+                                        <option value="ninguno">Ninguno</option>
+                                        <option value="agua">Agua</option>
+                                        <option value="luz">Luz</option>
+                                        <option value="agua-luz">Agua y Luz</option>
+                                        <option value="todos">Todos los servicios</option>
+                                    </select>
+                                    <div class="form-help">Servicios incluidos en el arriendo</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-users"></i> Personal</h3>
+                            
+                            <div class="staff-container">
+                                <div class="staff-item">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">Cocinero</label>
+                                            <div class="staff-details">
+                                                <div class="staff-quantity">
+                                                    <label class="form-label">Cantidad:</label>
+                                                    <input type="number" class="form-input staff-quantity-input" data-role="cocinero" data-type="quantity" placeholder="1" min="0" value="1">
+                                                </div>
+                                                <div class="staff-salary">
+                                                    <label class="form-label">Sueldo por mesero:</label>
+                                                    <input type="number" class="form-input staff-salary-input" data-role="cocinero" data-type="salary" placeholder="0" min="0">
+                                                    <div class="form-help">Salario mensual base en Ecuador</div>
+                                                </div>
+                                            </div>
+                                            <div class="staff-total">
+                                                <strong>Total: $<span class="staff-total-amount" data-role="cocinero">0</span>/mes</strong>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Meseros</label>
+                                            <div class="staff-details">
+                                                <div class="staff-quantity">
+                                                    <label class="form-label">Cantidad:</label>
+                                                    <input type="number" class="form-input staff-quantity-input" data-role="meseros" data-type="quantity" placeholder="2" min="0" value="2">
+                                                </div>
+                                                <div class="staff-salary">
+                                                    <label class="form-label">Sueldo por mesero:</label>
+                                                    <input type="number" class="form-input staff-salary-input" data-role="meseros" data-type="salary" placeholder="0" min="0">
+                                                    <div class="form-help">Salario mensual base en Ecuador</div>
+                                                </div>
+                                            </div>
+                                            <div class="staff-total">
+                                                <strong>Total: $<span class="staff-total-amount" data-role="meseros">0</span>/mes</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="staff-item">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">Caja/Administrativo</label>
+                                            <div class="staff-details">
+                                                <div class="staff-quantity">
+                                                    <label class="form-label">Cantidad:</label>
+                                                    <input type="number" class="form-input staff-quantity-input" data-role="caja" data-type="quantity" placeholder="1" min="0" value="1">
+                                                </div>
+                                                <div class="staff-salary">
+                                                    <label class="form-label">Sueldo por caja:</label>
+                                                    <input type="number" class="form-input staff-salary-input" data-role="caja" data-type="salary" placeholder="0" min="0">
+                                                    <div class="form-help">Salario mensual base en Ecuador</div>
+                                                </div>
+                                            </div>
+                                            <div class="staff-total">
+                                                <strong>Total: $<span class="staff-total-amount" data-role="caja">0</span>/mes</strong>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Limpieza</label>
+                                            <div class="staff-details">
+                                                <div class="staff-quantity">
+                                                    <label class="form-label">Cantidad:</label>
+                                                    <input type="number" class="form-input staff-quantity-input" data-role="limpieza" data-type="quantity" placeholder="1" min="0" value="1">
+                                                </div>
+                                                <div class="staff-salary">
+                                                    <label class="form-label">Sueldo por limpiador:</label>
+                                                    <input type="number" class="form-input staff-salary-input" data-role="limpieza" data-type="salary" placeholder="0" min="0">
+                                                    <div class="form-help">Salario mensual base en Ecuador</div>
+                                                </div>
+                                            </div>
+                                            <div class="staff-total">
+                                                <strong>Total: $<span class="staff-total-amount" data-role="limpieza">0</span>/mes</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Servicios -->
+                        <div class="form-section" id="serviciosSection">
+                            <h3><i class="fas fa-bolt"></i> Servicios</h3>
+                            <div class="services-info">
+                                <p><i class="fas fa-info-circle"></i> Los servicios se habilitan según lo que hayas seleccionado en "Servicios Incluidos" del arriendo.</p>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group service-group" data-service="electricidad">
+                                    <label class="form-label">Electricidad</label>
+                                    <input type="number" class="form-input service-input" data-service="electricidad" placeholder="0" min="0" disabled>
+                                    <div class="form-help">Costo mensual estimado</div>
+                                    <div class="service-status">
+                                        <i class="fas fa-times-circle"></i> No incluido en arriendo
+                                    </div>
+                                </div>
+                                <div class="form-group service-group" data-service="agua">
+                                    <label class="form-label">Agua</label>
+                                    <input type="number" class="form-input service-input" data-service="agua" placeholder="0" min="0" disabled>
+                                    <div class="form-help">Costo mensual estimado</div>
+                                    <div class="service-status">
+                                        <i class="fas fa-times-circle"></i> No incluido en arriendo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group service-group" data-service="internet">
+                                    <label class="form-label">Internet/Teléfono</label>
+                                    <input type="number" class="form-input service-input" data-service="internet" placeholder="0" min="0">
+                                    <div class="form-help">Costo mensual</div>
+                                    <div class="service-status">
+                                        <i class="fas fa-check-circle"></i> Servicio independiente
+                                    </div>
+                                </div>
+                                <div class="form-group service-group" data-service="gas">
+                                    <label class="form-label">Gas</label>
+                                    <input type="number" class="form-input service-input" data-service="gas" placeholder="0" min="0">
+                                    <div class="form-help">Costo mensual estimado</div>
+                                    <div class="service-status">
+                                        <i class="fas fa-check-circle"></i> Servicio independiente
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Otros Costos -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-plus-circle"></i> Otros Costos</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Seguros</label>
+                                    <input type="number" class="form-input other-cost-input" placeholder="0" min="0">
+                                    <div class="form-help">Seguro de local, equipos, etc.</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Mantenimiento</label>
+                                    <input type="number" class="form-input other-cost-input" placeholder="0" min="0">
+                                    <div class="form-help">Mantenimiento de equipos</div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Marketing</label>
+                                    <input type="number" class="form-input other-cost-input" placeholder="0" min="0">
+                                    <div class="form-help">Publicidad y promoción</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Otros</label>
+                                    <input type="number" class="form-input other-cost-input" placeholder="0" min="0">
+                                    <div class="form-help">Otros gastos fijos</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Navegación -->
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-secondary" onclick="previousStep()">
+                                <i class="fas fa-arrow-left"></i> Anterior
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">
+                                Siguiente <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Paso 4: Costos Variables -->
+            <div class="form-step" id="step4" data-step="4">
+                <div class="form-container">
+                    <!-- Botón para mostrar resumen de pasos -->
+                    <div class="summary-button-container">
+                        <button type="button" class="btn btn-outline-primary" id="showSummaryBtn" onclick="toggleSummaryModal()">
+                            <i class="fas fa-list-alt"></i> Ver Resumen de Pasos Completados
+                        </button>
+                    </div>
+                    
+                    <div class="form-header">
+                        <div class="header-content">
+                            <div class="header-left">
+                                <i class="fas fa-chart-line"></i>
+                                <h2>Paso 4: Costos Variables</h2>
+                            </div>
+                            <div class="header-right">
+                                <button type="button" class="btn btn-outline-secondary" onclick="autoCompleteStep(4)">
+                                    <i class="fas fa-magic"></i> Autocompletar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Costos Variables</strong> Son gastos que varían según la cantidad de productos que vendas. 
+                            Incluyen ingredientes, empaques y otros materiales directos.
+                        </div>
+                    </div>
+
+                    <form id="costosVariablesForm">
+                        <!-- Productos -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-hamburger"></i> Productos Principales</h3>
+                            <p class="section-description">Define hasta 3 productos principales de tu menú.</p>
+                            
+                            <div class="products-container">
+                                <!-- Los productos se generarán dinámicamente -->
+                            </div>
+                            
+                            <button type="button" class="btn btn-secondary" id="addProductBtn" onclick="addProduct()">
+                                <i class="fas fa-plus"></i> Agregar Producto
+                            </button>
+                        </div>
+
+
+
+                        <!-- Navegación -->
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-secondary" onclick="previousStep()">
+                                <i class="fas fa-arrow-left"></i> Anterior
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">
+                                Siguiente <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Paso 5: Precios -->
+            <div class="form-step" id="step5" data-step="5">
+                <div class="form-container">
+                    <!-- Botón para mostrar resumen de pasos -->
+                    <div class="summary-button-container">
+                        <button type="button" class="btn btn-outline-primary" id="showSummaryBtn" onclick="toggleSummaryModal()">
+                            <i class="fas fa-list-alt"></i> Ver Resumen de Pasos Completados
+                        </button>
+                    </div>
+                    
+                    <div class="form-header">
+                        <div class="header-content">
+                            <div class="header-left">
+                                <i class="fas fa-tags"></i>
+                                <h2>Paso 5: Precios de Venta</h2>
+                            </div>
+                            <div class="header-right">
+                                <button type="button" class="btn btn-outline-secondary" onclick="autoCompleteStep(5)">
+                                    <i class="fas fa-magic"></i> Autocompletar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Precios de Venta</strong> Define los precios que cobrarás por cada producto. 
+                            El sistema te dará recomendaciones basadas en tus costos y el tipo de negocio.
+                        </div>
+                    </div>
+
+                    <form id="preciosForm">
+                        <!-- Campos de Precio -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-dollar-sign"></i> Definir Precios</h3>
+                            <div id="pricingContainer">
+                                <!-- Los campos de precio se generarán dinámicamente -->
+                            </div>
+                        </div>
+
+
+
+                        <!-- Recomendaciones IA -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-robot"></i> Recomendaciones IA</h3>
+                            <div id="recommendationsContainer">
+                                <!-- Las recomendaciones se generarán dinámicamente -->
+                            </div>
+                        </div>
+
+                        <!-- Navegación -->
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-secondary" onclick="previousStep()">
+                                <i class="fas fa-arrow-left"></i> Anterior
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">
+                                Siguiente <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Paso 6: Análisis Final -->
+            <div class="form-step" id="step6" data-step="6">
+                <div class="form-container">
+                    <div class="form-header">
+                        <i class="fas fa-chart-line"></i>
+                        <h2>Paso 6: Análisis Final</h2>
+                    </div>
+
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>¡Análisis Completo!</strong> Revisa los resultados y la viabilidad de tu negocio.
+                        </div>
+                    </div>
+
+                    <!-- Puntuación de Viabilidad -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-star"></i> Puntuación de Viabilidad</h3>
+                        <div class="viability-score" id="viabilityScore">
+                            <div class="score-circle">
+                                <span class="score-value">0</span>
+                                <span class="score-label">/100</span>
+                            </div>
+                        </div>
+                        <div class="decision-section">
+                            <h4>Decisión Final:</h4>
+                            <div id="decisionAnswer" class="decision-answer">
+                                <!-- La decisión se mostrará aquí -->
+                            </div>
+                            <div id="decisionReasoning" class="decision-reasoning">
+                                <!-- El razonamiento se mostrará aquí -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Análisis de Punto de Equilibrio -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-balance-scale"></i> Punto de Equilibrio</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span>Unidades para Equilibrio:</span>
+                                <span class="summary-amount" id="unidadesEquilibrio">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Ventas para Equilibrio:</span>
+                                <span class="summary-amount" id="ventasEquilibrio">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Margen de Seguridad:</span>
+                                <span class="summary-amount" id="margenSeguridad">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Proyecciones de Flujo de Caja -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-chart-area"></i> Proyecciones (12 meses)</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span>Ganancia Total:</span>
+                                <span class="summary-amount" id="gananciaTotal">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Mejor Mes:</span>
+                                <span class="summary-amount" id="mejorMes">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Peor Mes:</span>
+                                <span class="summary-amount" id="peorMes">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Recuperación Inversión:</span>
+                                <span class="summary-amount" id="recuperacionInversion">0 meses</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen Ejecutivo -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-file-alt"></i> Resumen Ejecutivo</h3>
+                        <div class="executive-summary">
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <span>Inversión Total:</span>
+                                    <span class="summary-amount" id="resumenInversion">$0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Costos Fijos Mensuales:</span>
+                                    <span class="summary-amount" id="resumenCostosFijos">$0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Costo Promedio por Producto:</span>
+                                    <span class="summary-amount" id="resumenCostoProducto">$0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Precio Promedio de Venta:</span>
+                                    <span class="summary-amount" id="resumenPrecioVenta">$0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Margen de Ganancia:</span>
+                                    <span class="summary-amount" id="resumenMargenFinal">0%</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Punto de Equilibrio:</span>
+                                    <span class="summary-amount" id="resumenEquilibrio">0 unidades/mes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones Finales -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-cogs"></i> Acciones</h3>
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-success" onclick="guardarSimulacion()">
+                                <i class="fas fa-save"></i> Guardar Simulación
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="exportarReporte()">
+                                <i class="fas fa-download"></i> Exportar Reporte
+                            </button>
+                            <button type="button" class="btn btn-warning" onclick="resetSimulacion()">
+                                <i class="fas fa-redo"></i> Nueva Simulación
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Navegación -->
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn-secondary" onclick="previousStep()">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='home.html'">
+                            <i class="fas fa-home"></i> Volver al Inicio
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para Resumen de Pasos -->
+    <div id="summaryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-list-alt"></i> Resumen de Pasos Completados</h3>
+                <button type="button" class="modal-close" onclick="toggleSummaryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalStepSummaries"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="toggleSummaryModal()">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="simulador.js"></script>
+</body>
+</html>

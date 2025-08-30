@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeDashboard() {
     // Verificar autenticación
     if (!isAuthenticated()) {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
         return;
     }
     

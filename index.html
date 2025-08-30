@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Negocios - Tu Emprendimiento</title>
+    <title>Iniciar Sesión - Simulador de Negocios</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -15,8 +15,8 @@
                 <h1>Simulador de Negocios</h1>
             </div>
             <nav class="nav">
-                <a href="#" class="nav-link active">Inicio</a>
-                <a href="#" class="nav-link">Mis Simulaciones</a>
+                <a href="home.html" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Demo</a>
                 <a href="#" class="nav-link">Ayuda</a>
             </nav>
         </div>
@@ -24,95 +24,66 @@
 
     <main class="main">
         <div class="container">
-            <section class="hero">
-                <div class="hero-content">
-                    <h2>Simula tu negocio de comida y evalúa su viabilidad</h2>
-                    <p>Analiza costos, ingresos, punto de equilibrio y flujo de caja con ayuda de IA</p>
-                    <div class="hero-buttons">
-                        <button class="btn btn-primary" onclick="window.location.href='login.html'">
-                            <i class="fas fa-user"></i>
-                            Versión Completa
-                        </button>
-                        <button class="btn btn-secondary" onclick="startDemo()">
-                            <i class="fas fa-play"></i>
-                            Probar Demo
-                        </button>
+            <div class="auth-container">
+                <div class="auth-form-container">
+                    <div class="auth-header">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <h2>Iniciar Sesión</h2>
+                        <p>Accede a tu cuenta para continuar</p>
                     </div>
-                </div>
-                <div class="hero-image">
-                    <i class="fas fa-store"></i>
-                </div>
-            </section>
 
-            <section class="features">
-                <h3>¿Qué puedes hacer?</h3>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-calculator"></i>
+                    <form class="auth-form" id="loginForm">
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email</label>
+                            <input type="email" id="email" class="form-input" placeholder="tu@email.com" required>
                         </div>
-                        <h4>Análisis Completo</h4>
-                        <p>Calcula punto de equilibrio, costos fijos y variables, flujo de caja proyectado</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <h4>IA Inteligente</h4>
-                        <p>Validaciones automáticas y sugerencias personalizadas para tu negocio</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <h4>Visualizaciones</h4>
-                        <p>Gráficos claros y reportes detallados para tomar decisiones informadas</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <h4>Aprendizaje</h4>
-                        <p>Videos educativos y explicaciones simples de conceptos contables</p>
-                    </div>
-                </div>
-            </section>
 
-            <section class="business-types">
-                <h3>Tipos de Negocio Soportados</h3>
-                <div class="business-grid">
-                    <div class="business-card">
-                        <i class="fas fa-utensils"></i>
-                        <h4>Restaurante</h4>
-                    </div>
-                    <div class="business-card">
-                        <i class="fas fa-coffee"></i>
-                        <h4>Cafetería</h4>
-                    </div>
-                    <div class="business-card">
-                        <i class="fas fa-beer"></i>
-                        <h4>Bar</h4>
-                    </div>
-                    <div class="business-card">
-                        <i class="fas fa-hamburger"></i>
-                        <h4>Comida Rápida</h4>
-                    </div>
-                    <div class="business-card">
-                        <i class="fas fa-fish"></i>
-                        <h4>Cevichería</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="password">Contraseña</label>
+                            <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="remember">
+                                <span class="checkmark"></span>
+                                Recordarme
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Iniciar Sesión
+                        </button>
+                    </form>
+
+                    <div class="auth-footer">
+                        <p>¿No tienes cuenta? <a href="register.html">Crear cuenta</a></p>
+                        <p><a href="home.html">← Volver al inicio</a></p>
                     </div>
                 </div>
-            </section>
+
+                <div class="auth-info">
+                    <div class="info-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Acceso Seguro</h3>
+                        <p>Tus datos están protegidos con encriptación de nivel bancario</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-sync-alt"></i>
+                        <h3>Sincronización</h3>
+                        <p>Accede a tus simulaciones desde cualquier dispositivo</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Análisis Avanzado</h3>
+                        <p>Funciones premium con IA para análisis detallado</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Simulador de Negocios. Desarrollado para emprendedores.</p>
-        </div>
-    </footer>
-
     <script src="auth.js"></script>
-    <script src="script.js"></script>
 </body>
 </html>
