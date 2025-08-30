@@ -3125,9 +3125,17 @@ function validateFixedCostsWithAI() {
     const analysis = analyzeFixedCostsData(fixedCostsData, context);
     console.log('Resultado del análisis de costos fijos:', analysis);
     
-    // Mostrar advertencias inline (no bloquean el avance)
+    // Mostrar advertencias inline y bloquear avance si hay valores incoherentes
     if (analysis.warnings.length > 0) {
+        let hasBlockingErrors = false;
+        
         analysis.warnings.forEach(warning => {
+            // Determinar si la advertencia es para un servicio básico (debe bloquear)
+            const isServiceWarning = warning.includes('electricidad') || 
+                                   warning.includes('agua') || 
+                                   warning.includes('internet') || 
+                                   warning.includes('gas');
+            
             // Mapear advertencias a campos específicos
             if (warning.includes('arriendo')) {
                 const input = document.getElementById('arriendo');
@@ -3147,17 +3155,28 @@ function validateFixedCostsWithAI() {
             } else if (warning.includes('electricidad')) {
                 const input = document.querySelector('[data-service="electricidad"]');
                 if (input) showAIError(input, warning, analysis.estimatedValues.electricidad);
+                if (isServiceWarning) hasBlockingErrors = true;
             } else if (warning.includes('agua')) {
                 const input = document.querySelector('[data-service="agua"]');
                 if (input) showAIError(input, warning, analysis.estimatedValues.agua);
+                if (isServiceWarning) hasBlockingErrors = true;
             } else if (warning.includes('internet')) {
                 const input = document.querySelector('[data-service="internet"]');
                 if (input) showAIError(input, warning, analysis.estimatedValues.internet);
+                if (isServiceWarning) hasBlockingErrors = true;
             } else if (warning.includes('gas')) {
                 const input = document.querySelector('[data-service="gas"]');
                 if (input) showAIError(input, warning, analysis.estimatedValues.gas);
+                if (isServiceWarning) hasBlockingErrors = true;
             }
         });
+        
+        // Si hay errores bloqueantes en servicios básicos, mostrar notificación y bloquear
+        if (hasBlockingErrors) {
+            showNotification('❌ Los valores de los servicios básicos no son coherentes. Por favor, ajusta los valores según las recomendaciones de la IA.', 'error');
+            console.log('Valores incoherentes detectados en servicios básicos, bloqueando avance');
+            return false;
+        }
         
         console.log('Advertencias IA mostradas, pero permitiendo continuar...');
     } else {
