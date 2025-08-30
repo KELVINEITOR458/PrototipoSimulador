@@ -145,9 +145,14 @@
 
                         <!-- Navegación -->
                         <div class="form-navigation">
-                            <button type="button" class="btn btn-primary" onclick="nextStep()">
-                                Siguiente <i class="fas fa-arrow-right"></i>
-                            </button>
+                            <div class="navigation-right">
+                                <button type="button" class="btn btn-warning" onclick="analyzeCurrentStep()" id="analyzeBtn">
+                                    <i class="fas fa-robot"></i> Analizar
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep()" id="nextBtn" disabled>
+                                    Siguiente <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -276,9 +281,14 @@
                             <button type="button" class="btn btn-secondary" onclick="previousStep()">
                                 <i class="fas fa-arrow-left"></i> Anterior
                             </button>
-                            <button type="button" class="btn btn-primary" onclick="nextStep()">
-                                Siguiente <i class="fas fa-arrow-right"></i>
-                            </button>
+                            <div class="navigation-right">
+                                <button type="button" class="btn btn-warning" onclick="analyzeCurrentStep()" id="analyzeBtn">
+                                    <i class="fas fa-robot"></i> Analizar
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep()" id="nextBtn" disabled>
+                                    Siguiente <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -510,9 +520,14 @@
                             <button type="button" class="btn btn-secondary" onclick="previousStep()">
                                 <i class="fas fa-arrow-left"></i> Anterior
                             </button>
-                            <button type="button" class="btn btn-primary" onclick="nextStep()">
-                                Siguiente <i class="fas fa-arrow-right"></i>
-                            </button>
+                            <div class="navigation-right">
+                                <button type="button" class="btn btn-warning" onclick="analyzeCurrentStep()" id="analyzeBtn">
+                                    <i class="fas fa-robot"></i> Analizar
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep()" id="nextBtn" disabled>
+                                    Siguiente <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -572,9 +587,14 @@
                             <button type="button" class="btn btn-secondary" onclick="previousStep()">
                                 <i class="fas fa-arrow-left"></i> Anterior
                             </button>
-                            <button type="button" class="btn btn-primary" onclick="nextStep()">
-                                Siguiente <i class="fas fa-arrow-right"></i>
-                            </button>
+                            <div class="navigation-right">
+                                <button type="button" class="btn btn-warning" onclick="analyzeCurrentStep()" id="analyzeBtn">
+                                    <i class="fas fa-robot"></i> Analizar
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep()" id="nextBtn" disabled>
+                                    Siguiente <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -623,22 +643,21 @@
 
 
 
-                        <!-- Recomendaciones IA -->
-                        <div class="form-section">
-                            <h3><i class="fas fa-robot"></i> Recomendaciones IA</h3>
-                            <div id="recommendationsContainer">
-                                <!-- Las recomendaciones se generarán dinámicamente -->
-                            </div>
-                        </div>
+
 
                         <!-- Navegación -->
                         <div class="form-navigation">
                             <button type="button" class="btn btn-secondary" onclick="previousStep()">
                                 <i class="fas fa-arrow-left"></i> Anterior
                             </button>
-                            <button type="button" class="btn btn-primary" onclick="nextStep()">
-                                Siguiente <i class="fas fa-arrow-right"></i>
-                            </button>
+                            <div class="navigation-right">
+                                <button type="button" class="btn btn-warning" onclick="analyzeCurrentStep()" id="analyzeBtn">
+                                    <i class="fas fa-robot"></i> Analizar
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep()" id="nextBtn" disabled>
+                                    Siguiente <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simulador</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Test del Sistema de Validación</h1>
+    
+    <div class="test-section">
+        <h3>Paso 1: Configuración</h3>
+        <p>Para probar el paso 1:</p>
+        <ol>
+            <li>Abre el simulador en <a href="http://localhost:8000/simulador.html" target="_blank">http://localhost:8000/simulador.html</a></li>
+            <li>Selecciona un tipo de negocio</li>
+            <li>Escribe una ubicación en Pichincha</li>
+            <li>Ingresa metros cuadrados (ej: 100)</li>
+            <li>Ingresa capacidad (ej: 50)</li>
+            <li>Haz clic en "Analizar"</li>
+            <li>Verifica que el botón "Siguiente" se habilite</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h3>Debugging</h3>
+        <p>Abre la consola del navegador (F12) para ver los logs de depuración:</p>
+        <ul>
+            <li>Los logs mostrarán qué validaciones se están ejecutando</li>
+            <li>Verás si las funciones retornan true/false</li>
+            <li>Podrás ver si el botón se encuentra y se habilita/deshabilita</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h3>Posibles Problemas</h3>
+        <ul>
+            <li><strong>Botón no encontrado:</strong> Verificar que el HTML tenga el ID correcto</li>
+            <li><strong>Validación falla:</strong> Verificar que los datos estén completos</li>
+            <li><strong>IA no responde:</strong> Verificar la conexión a internet</li>
+        </ul>
+    </div>
+</body>
+</html>

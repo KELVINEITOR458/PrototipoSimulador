@@ -443,6 +443,39 @@ body {
     border-top: 1px solid var(--border-color);
 }
 
+/* Form navigation */
+.form-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.navigation-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.navigation-right .btn {
+    min-width: 120px;
+}
+
+/* Botón deshabilitado */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+.btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
 /* Alerts */
 .alert {
     padding: 1rem;

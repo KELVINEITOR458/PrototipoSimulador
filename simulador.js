@@ -89,13 +89,21 @@ function setupModalEvents() {
 
 function nextStep() {
     try {
-    if (validateCurrentStep()) {
-        if (currentStep < 6) {
-            currentStep++;
-            showStep(currentStep);
-            updateProgressBar();
-            generateStepSummaries();
+        // Verificar si el botón siguiente está habilitado (análisis completado)
+        const currentStepElement = document.querySelector('.form-step.active');
+        const nextBtn = currentStepElement ? currentStepElement.querySelector('#nextBtn') : null;
+        if (nextBtn && nextBtn.disabled) {
+            showNotification('❌ Debes hacer clic en "Analizar" antes de continuar al siguiente paso.', 'error');
+            return;
         }
+        
+        if (validateCurrentStep()) {
+            if (currentStep < 6) {
+                currentStep++;
+                showStep(currentStep);
+                updateProgressBar();
+                generateStepSummaries();
+            }
         }
     } catch (error) {
         console.error('Error al avanzar paso:', error);
@@ -141,6 +149,12 @@ function showStep(stepNumber) {
         
         // Ejecutar funciones específicas del paso
         executeStepFunctions(stepNumber);
+        
+        // Deshabilitar botón siguiente al cambiar de paso
+        const nextBtn = document.querySelector('.form-step.active #nextBtn');
+        if (nextBtn) {
+            nextBtn.disabled = true;
+        }
         } else {
             console.error(`No se encontró el elemento step${stepNumber}`);
         }
@@ -280,10 +294,18 @@ function validateCurrentStep() {
 }
 
 function validateConfiguration() {
+    console.log('Iniciando validación de configuración...');
     const businessType = document.querySelector('.business-option.selected');
     const location = document.getElementById('location').value;
     const size = document.getElementById('size').value;
     const capacity = document.getElementById('capacity').value;
+    
+    console.log('Datos de configuración:', {
+        businessType: businessType ? businessType.dataset.type : 'no seleccionado',
+        location: location,
+        size: size,
+        capacity: capacity
+    });
     
     let isValid = true;
     
@@ -320,8 +342,12 @@ function validateConfiguration() {
             descripcion: document.getElementById('description').value
         };
         saveToStorage();
+        console.log('Configuración válida, datos guardados');
+    } else {
+        console.log('Configuración inválida');
     }
     
+    console.log('validateConfiguration() retornando:', isValid);
     return isValid;
 }
 
@@ -441,6 +467,26 @@ function validateVariableCosts() {
                 if (!consistencyCheck.isConsistent) {
                     validationErrors.push(`Producto ${index + 1} (${productName}): ${consistencyCheck.message}`);
                 }
+                
+                // Validar precios de ingredientes
+                const ingredientItems = product.querySelectorAll('.ingredient-item');
+                ingredientItems.forEach((item, ingIndex) => {
+                    const nameInput = item.querySelector('.ingredient-name');
+                    const priceInput = item.querySelector('.ingredient-price');
+                    const unitInput = item.querySelector('.ingredient-purchase-unit');
+                    
+                    if (nameInput && priceInput && unitInput && nameInput.value.trim()) {
+                        const ingredientName = nameInput.value.trim();
+                        const price = parseFloat(priceInput.value) || 0;
+                        const unit = unitInput.value.trim();
+                        
+                        // Validar precio del ingrediente
+                        const priceValidation = validateIngredientPrice(ingredientName, price, unit);
+                        if (!priceValidation.isValid) {
+                            validationErrors.push(`Producto ${index + 1} (${productName}) - ${ingredientName}: ${priceValidation.message}`);
+                        }
+                    }
+                });
             }
         }
     });
@@ -457,6 +503,100 @@ function validateVariableCosts() {
     }
     
     return true;
+}
+
+function validateIngredientPrice(ingredientName, price, unit) {
+    console.log('Validando precio de ingrediente:', ingredientName, price, unit);
+    
+    // Precios base por unidad en Ecuador (USD)
+    const basePrices = {
+        // Carnes (por kg)
+        'pollo': { min: 2.5, max: 4.5, unit: 'kg' },
+        'carne de res': { min: 4.0, max: 8.0, unit: 'kg' },
+        'cerdo': { min: 3.0, max: 5.5, unit: 'kg' },
+        'pescado': { min: 3.5, max: 7.0, unit: 'kg' },
+        'camarón': { min: 8.0, max: 15.0, unit: 'kg' },
+        
+        // Verduras (por kg)
+        'cebolla': { min: 0.8, max: 1.5, unit: 'kg' },
+        'tomate': { min: 1.0, max: 2.0, unit: 'kg' },
+        'papa': { min: 0.6, max: 1.2, unit: 'kg' },
+        'zanahoria': { min: 0.8, max: 1.5, unit: 'kg' },
+        'lechuga': { min: 1.0, max: 2.0, unit: 'kg' },
+        'arroz': { min: 0.8, max: 1.5, unit: 'kg' },
+        'frijoles': { min: 1.2, max: 2.5, unit: 'kg' },
+        'lentejas': { min: 1.0, max: 2.0, unit: 'kg' },
+        
+        // Condimentos (por kg)
+        'sal': { min: 0.5, max: 1.0, unit: 'kg' },
+        'azúcar': { min: 0.8, max: 1.5, unit: 'kg' },
+        'aceite': { min: 2.0, max: 4.0, unit: 'l' },
+        'mantequilla': { min: 3.0, max: 6.0, unit: 'kg' },
+        
+        // Lácteos
+        'leche': { min: 1.0, max: 1.8, unit: 'l' },
+        'queso': { min: 4.0, max: 8.0, unit: 'kg' },
+        'huevos': { min: 2.5, max: 4.0, unit: 'docena' },
+        
+        // Frutas
+        'plátano': { min: 0.8, max: 1.5, unit: 'kg' },
+        'manzana': { min: 1.5, max: 3.0, unit: 'kg' },
+        'naranja': { min: 1.0, max: 2.0, unit: 'kg' },
+        'limón': { min: 1.5, max: 3.0, unit: 'kg' }
+    };
+    
+    // Buscar el ingrediente en la base de datos
+    const normalizedName = ingredientName.toLowerCase();
+    let foundIngredient = null;
+    
+    for (const [key, value] of Object.entries(basePrices)) {
+        if (normalizedName.includes(key) || key.includes(normalizedName)) {
+            foundIngredient = { ...value, name: key };
+            break;
+        }
+    }
+    
+    if (!foundIngredient) {
+        // Si no se encuentra, usar rangos genéricos por unidad
+        const genericRanges = {
+            'kg': { min: 1.0, max: 10.0 },
+            'g': { min: 0.001, max: 0.01 },
+            'l': { min: 1.0, max: 8.0 },
+            'ml': { min: 0.001, max: 0.008 },
+            'docena': { min: 2.0, max: 6.0 },
+            'unidad': { min: 0.5, max: 5.0 }
+        };
+        
+        const genericRange = genericRanges[unit] || genericRanges['unidad'];
+        foundIngredient = { min: genericRange.min, max: genericRange.max, unit: unit, name: 'ingrediente genérico' };
+    }
+    
+    // Validar precio
+    if (price <= 0) {
+        return {
+            isValid: false,
+            message: `El precio debe ser mayor a 0`
+        };
+    }
+    
+    if (price < foundIngredient.min * 0.3) {
+        return {
+            isValid: false,
+            message: `El precio ($${price}/${foundIngredient.unit}) es muy bajo para ${foundIngredient.name}. Rango típico: $${foundIngredient.min}-$${foundIngredient.max}/${foundIngredient.unit}`
+        };
+    }
+    
+    if (price > foundIngredient.max * 3) {
+        return {
+            isValid: false,
+            message: `El precio ($${price}/${foundIngredient.unit}) es muy alto para ${foundIngredient.name}. Rango típico: $${foundIngredient.min}-$${foundIngredient.max}/${foundIngredient.unit}`
+        };
+    }
+    
+    return {
+        isValid: true,
+        message: 'Precio válido'
+    };
 }
 
 function validateDishIngredientConsistency(dishName, ingredientNames) {
@@ -498,8 +638,8 @@ function validateDishIngredientConsistency(dishName, ingredientNames) {
         },
         'hamburguesa': {
             required: ['carne', 'pan'],
-            forbidden: ['pescado', 'atún'],
-            message: 'La Hamburguesa debe contener carne y pan, no pescado'
+            forbidden: ['pescado', 'atún', 'arroz', 'frijoles', 'lentejas'],
+            message: 'La Hamburguesa debe contener carne y pan, no ingredientes como arroz, frijoles o pescado'
         },
         'pizza': {
             required: ['harina', 'queso'],
@@ -515,12 +655,34 @@ function validateDishIngredientConsistency(dishName, ingredientNames) {
             required: ['fruta', 'naranja', 'limón'],
             forbidden: ['carne', 'pescado', 'pollo', 'cerdo'],
             message: 'El Jugo debe contener frutas, no carnes'
+        },
+        'tacos': {
+            required: ['carne', 'tortilla'],
+            forbidden: ['pescado', 'atún'],
+            message: 'Los Tacos deben contener carne y tortilla, no pescado'
+        },
+        'burrito': {
+            required: ['carne', 'tortilla'],
+            forbidden: ['pescado', 'atún'],
+            message: 'El Burrito debe contener carne y tortilla, no pescado'
+        },
+        'sandwich': {
+            required: ['pan'],
+            forbidden: ['pescado', 'atún'],
+            message: 'El Sandwich debe contener pan, no pescado'
+        },
+        'ensalada': {
+            required: ['lechuga', 'tomate'],
+            forbidden: [],
+            message: 'La Ensalada debe contener vegetales'
         }
     };
     
     // Buscar regla de validación para el plato
     for (const [dishKey, rule] of Object.entries(validationRules)) {
         if (normalizedDishName.includes(dishKey)) {
+            console.log(`Validando plato: ${dishKey} con ingredientes:`, ingredientNames);
+            
             // Verificar ingredientes requeridos
             const hasRequired = rule.required.some(req => 
                 ingredientNames.some(ing => ing.includes(req))
@@ -531,6 +693,9 @@ function validateDishIngredientConsistency(dishName, ingredientNames) {
                 ingredientNames.some(ing => ing.includes(forb))
             );
             
+            console.log(`Ingredientes requeridos encontrados: ${hasRequired}`);
+            console.log(`Ingredientes prohibidos encontrados: ${hasForbidden}`);
+            
             if (!hasRequired) {
                 return {
                     isConsistent: false,
@@ -539,9 +704,12 @@ function validateDishIngredientConsistency(dishName, ingredientNames) {
             }
             
             if (hasForbidden) {
+                const forbiddenFound = rule.forbidden.filter(forb => 
+                    ingredientNames.some(ing => ing.includes(forb))
+                );
                 return {
                     isConsistent: false,
-                    message: rule.message
+                    message: `${rule.message} (Ingredientes inapropiados encontrados: ${forbiddenFound.join(', ')})`
                 };
             }
             
@@ -2792,7 +2960,13 @@ function validateFixedCostsWithAI() {
         servicios: businessData.costosFijos.servicios || {}
     };
     
-    const analysis = analyzeFixedCostsData(fixedCostsData, getBusinessContext());
+    console.log('Datos de costos fijos para análisis:', fixedCostsData);
+    
+    const context = getBusinessContext();
+    console.log('Contexto del negocio:', context);
+    
+    const analysis = analyzeFixedCostsData(fixedCostsData, context);
+    console.log('Resultado del análisis de costos fijos:', analysis);
     
     // Mostrar errores inline (solo como advertencias, no bloquean el avance)
     if (analysis.warnings.length > 0) {
@@ -2830,8 +3004,11 @@ function validateFixedCostsWithAI() {
         
         // Las validaciones IA son solo advertencias, no bloquean el avance
         console.log('Advertencias IA mostradas, pero permitiendo continuar...');
+    } else {
+        console.log('No se encontraron advertencias de IA para costos fijos');
     }
     
+    console.log('validateFixedCostsWithAI() retornando: true');
     return true;
 }
 
@@ -2841,34 +3018,111 @@ function validateVariableCostsWithAI() {
     // Limpiar errores anteriores
     clearAllAIErrors();
     
-    const analysis = analyzeDataWithAI(businessData.costosVariables, 'variableCosts');
+    // Obtener datos de productos e ingredientes
+    const products = document.querySelectorAll('.product-card');
+    let hasWarnings = false;
     
-    // Mostrar errores inline
-    if (analysis.warnings.length > 0) {
-        analysis.warnings.forEach(warning => {
-            // Buscar el ingrediente específico mencionado en la advertencia
-            const productCards = document.querySelectorAll('.product-card');
-            productCards.forEach((card, productIndex) => {
-                const ingredientItems = card.querySelectorAll('.ingredient-item');
-                ingredientItems.forEach((item, ingredientIndex) => {
-                    const nameInput = item.querySelector('.ingredient-name');
-                    const priceInput = item.querySelector('.ingredient-price');
+    products.forEach((product, productIndex) => {
+        const productName = product.querySelector('.product-name')?.value.trim();
+        if (!productName) return;
+        
+        const ingredientItems = product.querySelectorAll('.ingredient-item');
+        ingredientItems.forEach((item, ingredientIndex) => {
+            const nameInput = item.querySelector('.ingredient-name');
+            const priceInput = item.querySelector('.ingredient-price');
+            const unitInput = item.querySelector('.ingredient-purchase-unit');
+            const quantityInput = item.querySelector('.ingredient-quantity');
+            
+            if (nameInput && priceInput && unitInput && nameInput.value.trim()) {
+                const ingredientName = nameInput.value.trim();
+                const price = parseFloat(priceInput.value) || 0;
+                const unit = unitInput.value.trim();
+                const quantity = parseFloat(quantityInput?.value) || 0;
+                
+                // Validar precio del ingrediente
+                const priceValidation = validateIngredientPrice(ingredientName, price, unit);
+                if (!priceValidation.isValid) {
+                    showAIError(priceInput, priceValidation.message);
+                    hasWarnings = true;
+                }
+                
+                // Validar cantidad vs precio
+                if (quantity > 0 && price > 0) {
+                    const totalCost = quantity * price;
                     
-                    if (nameInput && warning.includes(nameInput.value)) {
-                        const key = `producto_${productIndex}_ingrediente_${ingredientIndex}`;
-                        if (analysis.estimatedValues[key]) {
-                            showAIError(priceInput, warning, analysis.estimatedValues[key]);
-                        } else {
-                            showAIError(priceInput, warning);
-                        }
+                    // Validar que el costo total del ingrediente no sea excesivo
+                    if (totalCost > 50) { // Más de $50 por ingrediente es sospechoso
+                        const message = `El costo total de ${ingredientName} ($${totalCost}) parece muy alto. Verifica la cantidad y el precio.`;
+                        showAIError(priceInput, message);
+                        hasWarnings = true;
                     }
-                });
-            });
+                }
+            }
+        });
+    });
+    
+    // Validar consistencia de costos totales por producto
+    products.forEach((product, productIndex) => {
+        const productName = product.querySelector('.product-name')?.value.trim();
+        if (!productName) return;
+        
+        // Validar unidades por plato
+        const unitsInput = product.querySelector('.product-units');
+        if (unitsInput) {
+            const unitsPerPlate = parseFloat(unitsInput.value) || 1;
+            
+            // Validar que las unidades por plato sean razonables
+            if (unitsPerPlate > 10) {
+                const message = `Las unidades por plato (${unitsPerPlate}) para "${productName}" parecen muy altas. Verifica que sea correcto.`;
+                showNotification(message, 'warning');
+                hasWarnings = true;
+            }
+            
+            // Validar consistencia con el nombre del producto
+            const normalizedName = productName.toLowerCase();
+            if (normalizedName.includes('hamburguesa') && unitsPerPlate > 2) {
+                const message = `Una hamburguesa típicamente se vende por unidad. Verifica las unidades por plato (${unitsPerPlate}).`;
+                showNotification(message, 'warning');
+                hasWarnings = true;
+            } else if (normalizedName.includes('taco') && unitsPerPlate < 2) {
+                const message = `Los tacos típicamente se venden en porciones de 2 o más. Considera aumentar las unidades por plato.`;
+                showNotification(message, 'info');
+            } else if (normalizedName.includes('pizza') && unitsPerPlate > 1) {
+                const message = `Una pizza típicamente se vende por unidad. Verifica las unidades por plato (${unitsPerPlate}).`;
+                showNotification(message, 'warning');
+                hasWarnings = true;
+            }
+        }
+        
+        let totalProductCost = 0;
+        const ingredientItems = product.querySelectorAll('.ingredient-item');
+        
+        ingredientItems.forEach((item) => {
+            const priceInput = item.querySelector('.ingredient-price');
+            const quantityInput = item.querySelector('.ingredient-quantity');
+            
+            if (priceInput && quantityInput) {
+                const price = parseFloat(priceInput.value) || 0;
+                const quantity = parseFloat(quantityInput.value) || 0;
+                totalProductCost += price * quantity;
+            }
         });
         
-        return false;
+        // Validar que el costo total del producto sea razonable
+        if (totalProductCost > 20) { // Más de $20 de costo por producto es alto
+            const message = `El costo total del producto "${productName}" ($${totalProductCost}) parece muy alto. Revisa los precios de los ingredientes.`;
+            showNotification(message, 'warning');
+            hasWarnings = true;
+        }
+    });
+    
+    if (hasWarnings) {
+        console.log('Advertencias de IA mostradas para costos variables');
+    } else {
+        console.log('No se encontraron advertencias de IA para costos variables');
     }
     
+    // Las validaciones IA son solo advertencias, no bloquean el avance
     return true;
 }
 
@@ -3317,15 +3571,53 @@ function autoCompleteVariableCosts() {
 
 // Autocompletar precios
 function autoCompletePricing() {
+    console.log('Autocompletando precios...');
+    
     // Generar campos de precio si no existen
     generatePricingFields();
     
-    // Establecer precios (USD para Ecuador)
-    const priceInputs = document.querySelectorAll('.price-input');
-    if (priceInputs.length >= 2) {
-        priceInputs[0].value = '6'; // Seco de Pollo
-        priceInputs[1].value = '4'; // Llapingachos
+    // Obtener productos de costos variables
+    const products = businessData.costosVariables.productos || [];
+    
+    if (products.length === 0) {
+        console.log('No hay productos definidos para autocompletar precios');
+        showNotification('No hay productos definidos. Completa el paso anterior primero.', 'warning');
+        return;
     }
+    
+    // Establecer precios basados en costos y márgenes típicos (USD para Ecuador)
+    products.forEach((product, index) => {
+        const cost = product.costoTotal || 0;
+        let suggestedPrice = 0;
+        
+        // Calcular precio sugerido basado en el tipo de producto
+        if (product.nombre.toLowerCase().includes('seco') || product.nombre.toLowerCase().includes('plato')) {
+            suggestedPrice = Math.max(cost * 2.5, 6); // Mínimo $6 para platos principales
+        } else if (product.nombre.toLowerCase().includes('bebida') || product.nombre.toLowerCase().includes('jugo')) {
+            suggestedPrice = Math.max(cost * 3.0, 2); // Mínimo $2 para bebidas
+        } else if (product.nombre.toLowerCase().includes('postre') || product.nombre.toLowerCase().includes('dulce')) {
+            suggestedPrice = Math.max(cost * 2.8, 3); // Mínimo $3 para postres
+        } else {
+            suggestedPrice = Math.max(cost * 2.5, 4); // Precio base para otros productos
+        }
+        
+        // Buscar el input de precio correspondiente
+        const priceInput = document.querySelector(`[data-product="${product.id}"].price-input`);
+        if (priceInput) {
+            priceInput.value = Math.round(suggestedPrice * 100) / 100; // Redondear a 2 decimales
+            console.log(`Precio autocompletado para ${product.nombre}: $${priceInput.value}`);
+        }
+    });
+    
+    // Actualizar datos y cálculos
+    updateBusinessDataFromForm();
+    saveToStorage();
+    
+    // Actualizar análisis de precios
+    calculatePricingAnalysis();
+    
+    console.log('Precios autocompletados correctamente');
+    showNotification('Precios autocompletados basados en costos y márgenes típicos.', 'success');
 }
 
 // ===== VALIDACIÓN IA CON ERRORES INLINE =====
@@ -4208,6 +4500,11 @@ function generateGenericIngredients(dishName, businessType) {
 }
 
 function suggestIngredientsForDish(productId) {
+    // Función deshabilitada para evitar mensajes automáticos
+    // Los análisis de IA ahora solo se ejecutan cuando se hace clic en "Analizar"
+    return;
+    
+    /*
     const productNameInput = document.querySelector(`[data-product="${productId}"].product-name`);
     if (!productNameInput) return;
     
@@ -4222,6 +4519,7 @@ function suggestIngredientsForDish(productId) {
     
     // Mostrar sugerencia (solo información, sin aplicar automáticamente)
     showDishAnalysis(analysis, productId);
+    */
 }
 
 // Función para corregir consistencia (mantenida para el botón "Corregir Automáticamente")
@@ -4243,6 +4541,123 @@ function fixDishConsistency(productId) {
     }
 }
 
+// Función para analizar el paso actual
+function analyzeCurrentStep() {
+    const currentStep = getCurrentStep();
+    console.log('Analizando paso actual:', currentStep);
+    
+    // Cambiar estado del botón de analizar
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    if (analyzeBtn) {
+        analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analizando...';
+        analyzeBtn.disabled = true;
+    }
+    
+    // Validar según el paso actual
+    let isValid = false;
+    let validationMessage = '';
+    
+    switch (currentStep) {
+        case 1: // Configuración
+            console.log('Validando paso 1: Configuración');
+            isValid = validateConfiguration();
+            console.log('validateConfiguration() retornó:', isValid);
+            if (isValid) {
+                isValid = validateConfigurationWithAI();
+                console.log('validateConfigurationWithAI() retornó:', isValid);
+            }
+            validationMessage = 'configuración';
+            break;
+            
+        case 2: // Inversión
+            console.log('Validando paso 2: Inversión');
+            isValid = validateInvestment();
+            console.log('validateInvestment() retornó:', isValid);
+            if (isValid) {
+                isValid = validateInvestmentWithAI();
+                console.log('validateInvestmentWithAI() retornó:', isValid);
+            }
+            validationMessage = 'inversión';
+            break;
+            
+        case 3: // Costos Fijos
+            console.log('Validando paso 3: Costos Fijos');
+            isValid = validateFixedCosts();
+            console.log('validateFixedCosts() retornó:', isValid);
+            if (isValid) {
+                isValid = validateFixedCostsWithAI();
+                console.log('validateFixedCostsWithAI() retornó:', isValid);
+            }
+            validationMessage = 'costos fijos';
+            break;
+            
+        case 4: // Costos Variables
+            console.log('Validando paso 4: Costos Variables');
+            isValid = validateVariableCosts();
+            console.log('validateVariableCosts() retornó:', isValid);
+            if (isValid) {
+                isValid = validateVariableCostsWithAI();
+                console.log('validateVariableCostsWithAI() retornó:', isValid);
+            }
+            validationMessage = 'costos variables';
+            break;
+            
+        case 5: // Precios
+            console.log('Validando paso 5: Precios');
+            isValid = validatePricing();
+            console.log('validatePricing() retornó:', isValid);
+            if (isValid) {
+                isValid = validatePricingWithAI();
+                console.log('validatePricingWithAI() retornó:', isValid);
+            }
+            validationMessage = 'precios';
+            break;
+            
+        default:
+            isValid = false;
+            validationMessage = 'paso actual';
+    }
+    
+    // Restaurar botón de analizar
+    if (analyzeBtn) {
+        analyzeBtn.innerHTML = '<i class="fas fa-robot"></i> Analizar';
+        analyzeBtn.disabled = false;
+    }
+    
+    // Habilitar o deshabilitar botón siguiente
+    console.log('Resultado final de validación:', isValid);
+    
+    // Buscar el botón siguiente en el paso actual
+    const currentStepElement = document.querySelector('.form-step.active');
+    const nextBtn = currentStepElement ? currentStepElement.querySelector('#nextBtn') : null;
+    
+    if (nextBtn) {
+        console.log('Botón siguiente encontrado, estado actual:', nextBtn.disabled);
+        if (isValid) {
+            nextBtn.disabled = false;
+            console.log('Botón siguiente habilitado');
+            showNotification(`✅ Análisis completado. Los ${validationMessage} están correctos.`, 'success');
+        } else {
+            nextBtn.disabled = true;
+            console.log('Botón siguiente deshabilitado');
+            showNotification(`❌ Análisis completado. Hay errores en los ${validationMessage}. Revisa los mensajes anteriores.`, 'error');
+        }
+    } else {
+        console.log('ERROR: No se encontró el botón siguiente en el paso actual');
+    }
+    
+    return isValid;
+}
+
+// Función para obtener el paso actual
+function getCurrentStep() {
+    const currentStepElement = document.querySelector('.form-step.active');
+    if (currentStepElement) {
+        return parseInt(currentStepElement.getAttribute('data-step'));
+    }
+    return 1;
+}
+
 function showDishAnalysis(analysis, productId) {
     // Remover análisis anterior
     const existingAnalysis = document.querySelector(`[data-product="${productId}"] .dish-analysis`);
@@ -4254,7 +4669,7 @@ function showDishAnalysis(analysis, productId) {
     if (!productCard) return;
     
     const analysisHtml = `
-        <div class="dish-analysis" data-product="${productId}">
+        <div class="dish-analysis" data-product="${productId}" style="display: none;">
             <div class="analysis-header">
                 <i class="fas fa-robot"></i>
                 <strong>Análisis IA: ${analysis.message}</strong>
@@ -4437,8 +4852,13 @@ function createProductHTML(productId) {
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Nombre del Producto</label>
-                    <input type="text" class="form-input product-name" placeholder="Ej: Seco de Pollo, Ceviche, Hamburguesa..." data-product="${productId}" onblur="suggestIngredientsForDish(${productId})">
-                    <div class="form-help">Escribe el nombre del plato y la IA sugerirá ingredientes apropiados</div>
+                    <input type="text" class="form-input product-name" placeholder="Ej: Seco de Pollo, Ceviche, Hamburguesa..." data-product="${productId}">
+                    <div class="form-help">Escribe el nombre del plato. La IA analizará los ingredientes cuando hagas clic en "Analizar"</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Unidades por Plato</label>
+                    <input type="number" class="form-input product-units" placeholder="1" data-product="${productId}" min="1" value="1">
+                    <div class="form-help">Cantidad de unidades que se venden por plato (ej: 1 hamburguesa, 2 tacos, etc.)</div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Tipo</label>
@@ -4476,7 +4896,7 @@ function createProductHTML(productId) {
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Precio de Compra</label>
+                                <label class="form-label">Precio por Unidad de Compra</label>
                                 <input type="number" class="form-input ingredient-price" placeholder="0" data-product="${productId}" data-ingredient="1" step="0.01">
                             </div>
                             <div class="form-group">
@@ -4494,12 +4914,6 @@ function createProductHTML(productId) {
                                     <option value="lata">Lata</option>
                                     <option value="bolsa">Bolsa</option>
                                     <option value="docena">Docena</option>
-                                    <option value="kilo">Kilo</option>
-                                    <option value="libra">Libra</option>
-                                    <option value="onza">Onza</option>
-                                    <option value="taza">Taza</option>
-                                    <option value="cucharada">Cucharada</option>
-                                    <option value="cucharadita">Cucharadita</option>
                                 </select>
                             </div>
                         </div>
@@ -4922,7 +5336,7 @@ function createIngredientHTML(productId, ingredientId) {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Precio de Compra</label>
+                    <label class="form-label">Precio por Unidad de Compra</label>
                     <input type="number" class="form-input ingredient-price" placeholder="0" data-product="${productId}" data-ingredient="${ingredientId}" step="0.01">
                 </div>
                 <div class="form-group">
@@ -4940,12 +5354,6 @@ function createIngredientHTML(productId, ingredientId) {
                         <option value="lata">Lata</option>
                         <option value="bolsa">Bolsa</option>
                         <option value="docena">Docena</option>
-                        <option value="kilo">Kilo</option>
-                        <option value="libra">Libra</option>
-                        <option value="onza">Onza</option>
-                        <option value="taza">Taza</option>
-                        <option value="cucharada">Cucharada</option>
-                        <option value="cucharadita">Cucharadita</option>
                     </select>
                 </div>
             </div>
