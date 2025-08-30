@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración del Negocio - Simulador</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Simulador de Negocios</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Mis Simulaciones</a>
+                <a href="#" class="nav-link">Ayuda</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 16.66%"></div>
+            </div>
+
+            <div class="form-container">
+                <div class="form-header">
+                    <i class="fas fa-cog"></i>
+                    <h2>Paso 1: Configuración Básica del Negocio</h2>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>¡Bienvenido!</strong> Vamos a configurar tu negocio paso a paso. 
+                        Esta información nos ayudará a personalizar el análisis para tu tipo de negocio.
+                    </div>
+                </div>
+
+                <form id="configForm">
+                    <!-- Tipo de Negocio -->
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Negocio *</label>
+                        <div class="business-selection">
+                            <div class="business-option" data-type="restaurante">
+                                <i class="fas fa-utensils"></i>
+                                <h4>Restaurante</h4>
+                                <p>Comida completa, servicio a la mesa</p>
+                            </div>
+                            <div class="business-option" data-type="cafeteria">
+                                <i class="fas fa-coffee"></i>
+                                <h4>Cafetería</h4>
+                                <p>Café, bebidas, snacks ligeros</p>
+                            </div>
+                            <div class="business-option" data-type="bar">
+                                <i class="fas fa-beer"></i>
+                                <h4>Bar</h4>
+                                <p>Bebidas alcohólicas, ambiente nocturno</p>
+                            </div>
+                            <div class="business-option" data-type="comida-rapida">
+                                <i class="fas fa-hamburger"></i>
+                                <h4>Comida Rápida</h4>
+                                <p>Servicio rápido, para llevar</p>
+                            </div>
+                            <div class="business-option" data-type="cevicheria">
+                                <i class="fas fa-fish"></i>
+                                <h4>Cevichería</h4>
+                                <p>Especializada en mariscos</p>
+                            </div>
+                        </div>
+                        <div class="form-error" id="businessTypeError" style="display: none;">
+                            Por favor selecciona un tipo de negocio
+                        </div>
+                    </div>
+
+                    <!-- Ubicación -->
+                    <div class="form-group">
+                        <label class="form-label" for="location">Ubicación/Sector *</label>
+                        <input type="text" id="location" class="form-input" placeholder="Ej: Valle de Tumbaco, Parque de Cumbayá, Centro de Quito">
+                        <div class="form-help">
+                            <i class="fas fa-lightbulb"></i>
+                            La ubicación influye en los costos de arriendo y precios de venta. 
+                            Sé específico para obtener análisis más precisos.
+                        </div>
+                        <div class="form-error" id="locationError" style="display: none;">
+                            Por favor ingresa la ubicación de tu negocio
+                        </div>
+                    </div>
+
+                    <!-- Tamaño y Capacidad -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="size">Tamaño (m²) *</label>
+                            <input type="number" id="size" class="form-input" placeholder="Ej: 50" min="10" max="1000">
+                            <div class="form-help">
+                                Metros cuadrados del local
+                            </div>
+                            <div class="form-error" id="sizeError" style="display: none;">
+                                Ingresa un tamaño válido entre 10 y 1000 m²
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="capacity">Capacidad (personas) *</label>
+                            <input type="number" id="capacity" class="form-input" placeholder="Ej: 20" min="5" max="200">
+                            <div class="form-help">
+                                Número máximo de personas que pueden estar en el local
+                            </div>
+                            <div class="form-error" id="capacityError" style="display: none;">
+                                Ingresa una capacidad válida entre 5 y 200 personas
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Categoría de Tamaño -->
+                    <div class="form-group">
+                        <label class="form-label">Categoría de Tamaño</label>
+                        <div class="size-categories">
+                            <div class="size-option" data-size="pequeno">
+                                <i class="fas fa-home"></i>
+                                <h4>Pequeño</h4>
+                                <p>Hasta 50 m², 15 personas</p>
+                            </div>
+                            <div class="size-option" data-size="mediano">
+                                <i class="fas fa-building"></i>
+                                <h4>Mediano</h4>
+                                <p>50-100 m², 15-40 personas</p>
+                            </div>
+                            <div class="size-option" data-size="grande">
+                                <i class="fas fa-warehouse"></i>
+                                <h4>Grande</h4>
+                                <p>Más de 100 m², 40+ personas</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nombre del Negocio -->
+                    <div class="form-group">
+                        <label class="form-label" for="businessName">Nombre del Negocio</label>
+                        <input type="text" id="businessName" class="form-input" placeholder="Ej: Mi Restaurante, La Cafetería del Valle">
+                        <div class="form-help">
+                            Opcional: Un nombre para identificar tu simulación
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="form-group">
+                        <label class="form-label" for="description">Descripción del Negocio</label>
+                        <textarea id="description" class="form-textarea" placeholder="Describe brevemente tu concepto de negocio, público objetivo, especialidades..."></textarea>
+                        <div class="form-help">
+                            Esta información nos ayudará a personalizar las sugerencias de la IA
+                        </div>
+                    </div>
+
+                    <!-- Navegación -->
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">
+                            <i class="fas fa-arrow-left"></i>
+                            Volver
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Siguiente
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Ayuda Contextual -->
+            <div class="help-panel">
+                <h3><i class="fas fa-question-circle"></i> ¿Necesitas ayuda?</h3>
+                <div class="help-content">
+                    <div class="help-item">
+                        <h4>¿Cómo elegir el tipo de negocio?</h4>
+                        <p>Selecciona el que mejor describa tu concepto. Esto afectará las validaciones de costos y sugerencias de la IA.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Por qué es importante la ubicación?</h4>
+                        <p>Los costos de arriendo y precios de venta varían significativamente según la zona. Una ubicación específica te dará análisis más precisos.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Cómo estimar la capacidad?</h4>
+                        <p>Considera el espacio disponible y el tipo de servicio. Una cafetería puede tener más rotación que un restaurante formal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Simulador de Negocios. Desarrollado para emprendedores.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

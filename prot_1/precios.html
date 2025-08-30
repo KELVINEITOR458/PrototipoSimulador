@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precios de Venta - Simulador</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Simulador de Negocios</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Mis Simulaciones</a>
+                <a href="#" class="nav-link">Ayuda</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 83.33%"></div>
+            </div>
+
+            <div class="form-container">
+                <div class="form-header">
+                    <i class="fas fa-tag"></i>
+                    <h2>Paso 5: Precios de Venta</h2>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Precios de Venta</strong> Define los precios de tus productos. 
+                        La IA te ayudará a validar que sean competitivos y rentables para tu ubicación.
+                    </div>
+                </div>
+
+                <form id="preciosForm">
+                    <!-- Configuración de Precios -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-cog"></i> Configuración de Precios</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="margenObjetivo">Margen de Ganancia Objetivo (%)</label>
+                                <input type="number" id="margenObjetivo" class="form-input" placeholder="30" min="0" max="100" step="0.1">
+                                <div class="form-help">Porcentaje de ganancia que quieres obtener sobre el costo</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="competencia">Nivel de Competencia</label>
+                                <select id="competencia" class="form-select">
+                                    <option value="baja">Baja (pocos competidores)</option>
+                                    <option value="media">Media (competencia moderada)</option>
+                                    <option value="alta">Alta (muchos competidores)</option>
+                                </select>
+                                <div class="form-help">Influencia en las validaciones de precios</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Precios por Producto -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-dollar-sign"></i> Precios por Producto</h3>
+                        
+                        <div class="pricing-container" id="pricingContainer">
+                            <!-- Los productos se cargarán dinámicamente aquí -->
+                        </div>
+                    </div>
+
+                    <!-- Análisis de Rentabilidad -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-chart-line"></i> Análisis de Rentabilidad</h3>
+                        
+                        <div class="profitability-grid">
+                            <div class="profitability-card">
+                                <div class="card-header">
+                                    <i class="fas fa-percentage"></i>
+                                    <h4>Margen Promedio</h4>
+                                </div>
+                                <div class="card-content">
+                                    <div class="metric">
+                                        <span class="metric-value" id="margenPromedio">0%</span>
+                                        <span class="metric-label">Ganancia promedio</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profitability-card">
+                                <div class="card-header">
+                                    <i class="fas fa-trending-up"></i>
+                                    <h4>Producto Más Rentable</h4>
+                                </div>
+                                <div class="card-content">
+                                    <div class="metric">
+                                        <span class="metric-value" id="productoMasRentable">-</span>
+                                        <span class="metric-label">Mayor margen</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profitability-card">
+                                <div class="card-header">
+                                    <i class="fas fa-trending-down"></i>
+                                    <h4>Producto Menos Rentable</h4>
+                                </div>
+                                <div class="card-content">
+                                    <div class="metric">
+                                        <span class="metric-value" id="productoMenosRentable">-</span>
+                                        <span class="metric-label">Menor margen</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profitability-card">
+                                <div class="card-header">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <h4>Productos Críticos</h4>
+                                </div>
+                                <div class="card-content">
+                                    <div class="metric">
+                                        <span class="metric-value" id="productosCriticos">0</span>
+                                        <span class="metric-label">Margen < 20%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recomendaciones de Precios -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-lightbulb"></i> Recomendaciones de la IA</h3>
+                        
+                        <div class="recommendations-container" id="recommendationsContainer">
+                            <!-- Las recomendaciones se cargarán dinámicamente aquí -->
+                        </div>
+                    </div>
+
+                    <!-- Resumen de Precios -->
+                    <div class="summary-section">
+                        <h3><i class="fas fa-calculator"></i> Resumen de Precios</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span>Precio Promedio:</span>
+                                <span class="summary-amount" id="precioPromedio">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Margen Promedio:</span>
+                                <span class="summary-amount" id="resumenMargen">0%</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Producto Más Caro:</span>
+                                <span class="summary-amount" id="productoMasCaro">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Producto Más Barato:</span>
+                                <span class="summary-amount" id="productoMasBarato">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alertas IA -->
+                    <div id="iaAlerts" class="alerts-container"></div>
+
+                    <!-- Navegación -->
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='costos-variables.html'">
+                            <i class="fas fa-arrow-left"></i>
+                            Anterior
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Siguiente
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Ayuda Contextual -->
+            <div class="help-panel">
+                <h3><i class="fas fa-question-circle"></i> ¿Necesitas ayuda con los precios?</h3>
+                <div class="help-content">
+                    <div class="help-item">
+                        <h4>¿Cómo determinar el margen objetivo?</h4>
+                        <p>Un margen del 30-40% es típico para restaurantes. Considera tus costos fijos y la competencia. En zonas premium puedes cobrar más.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Qué significa "producto crítico"?</h4>
+                        <p>Son productos con margen menor al 20%. Pueden no ser rentables y deberías reconsiderar el precio o el costo.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Cómo validar precios con la competencia?</h4>
+                        <p>Investiga precios similares en tu zona. La IA te alertará si tus precios están muy altos o bajos para el mercado.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Simulador de Negocios. Desarrollado para emprendedores.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

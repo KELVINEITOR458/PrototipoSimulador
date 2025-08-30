@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Final - Simulador</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Simulador de Negocios</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Mis Simulaciones</a>
+                <a href="#" class="nav-link">Ayuda</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 100%"></div>
+            </div>
+
+            <div class="form-container">
+                <div class="form-header">
+                    <i class="fas fa-chart-bar"></i>
+                    <h2>Paso 6: Análisis Final y Resultados</h2>
+                </div>
+
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>¡Excelente!</strong> Has completado toda la información. 
+                        Ahora analizaremos la viabilidad de tu negocio con cálculos detallados.
+                    </div>
+                </div>
+
+                <form id="analisisForm">
+                    <!-- Proyecciones de Ventas -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-calendar-alt"></i> Proyecciones de Ventas (12 meses)</h3>
+                        <p class="section-description">Define cuántas unidades de cada producto esperas vender mensualmente. Considera la estacionalidad y el crecimiento gradual.</p>
+                        
+                        <div class="projections-container" id="projectionsContainer">
+                            <!-- Las proyecciones se cargarán dinámicamente aquí -->
+                        </div>
+                    </div>
+
+                    <!-- Punto de Equilibrio -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-balance-scale"></i> Punto de Equilibrio</h3>
+                        
+                        <div class="break-even-analysis">
+                            <div class="break-even-card">
+                                <div class="card-header">
+                                    <i class="fas fa-target"></i>
+                                    <h4>Unidades para Equilibrio</h4>
+                                </div>
+                                <div class="card-content">
+                                    <div class="metric">
+                                        <span class="metric-value" id="unidadesEquilibrio">0</span>
+                                        <span class="metric-label">unidades/mes</span>
+                                    </div>
+                                    <div class="metric-detail">
+                                        <span>Para cubrir todos los costos fijos</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="break-even-card">
+                                <div class="card-header">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <h4>Ventas para Equilibrio</h4>
+                                </div>
+                                <div class="card-content">
+                                    <div class="metric">
+                                        <span class="metric-value" id="ventasEquilibrio">$0</span>
+                                        <span class="metric-label">mensuales</span>
+                                    </div>
+                                    <div class="metric-detail">
+                                        <span>Monto mínimo de ventas</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="break-even-card">
+                                <div class="card-header">
+                                    <i class="fas fa-percentage"></i>
+                                    <h4>Margen de Seguridad</h4>
+                                </div>
+                                <div class="card-content">
+                                    <div class="metric">
+                                        <span class="metric-value" id="margenSeguridad">0%</span>
+                                        <span class="metric-label">de seguridad</span>
+                                    </div>
+                                    <div class="metric-detail">
+                                        <span>Diferencia vs proyección</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flujo de Caja Proyectado -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-chart-line"></i> Flujo de Caja Proyectado (12 meses)</h3>
+                        
+                        <div class="cash-flow-container">
+                            <div class="cash-flow-summary">
+                                <div class="summary-card">
+                                    <div class="card-header">
+                                        <i class="fas fa-plus-circle"></i>
+                                        <h4>Ganancia Total</h4>
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="metric">
+                                            <span class="metric-value" id="gananciaTotal">$0</span>
+                                            <span class="metric-label">en 12 meses</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="summary-card">
+                                    <div class="card-header">
+                                        <i class="fas fa-clock"></i>
+                                        <h4>Recuperación de Inversión</h4>
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="metric">
+                                            <span class="metric-value" id="recuperacionInversion">0</span>
+                                            <span class="metric-label">meses</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="summary-card">
+                                    <div class="card-header">
+                                        <i class="fas fa-trending-up"></i>
+                                        <h4>Mejor Mes</h4>
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="metric">
+                                            <span class="metric-value" id="mejorMes">-</span>
+                                            <span class="metric-label">ganancia</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="summary-card">
+                                    <div class="card-header">
+                                        <i class="fas fa-trending-down"></i>
+                                        <h4>Peor Mes</h4>
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="metric">
+                                            <span class="metric-value" id="peorMes">-</span>
+                                            <span class="metric-label">ganancia</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cash-flow-chart">
+                                <h4>Evolución Mensual</h4>
+                                <div class="chart-container" id="cashFlowChart">
+                                    <!-- Gráfico se generará dinámicamente -->
+                                    <div class="chart-placeholder">
+                                        <i class="fas fa-chart-line"></i>
+                                        <p>Gráfico de flujo de caja</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Análisis de Viabilidad -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-thumbs-up"></i> Análisis de Viabilidad</h3>
+                        
+                        <div class="viability-analysis">
+                            <div class="viability-score">
+                                <div class="score-circle" id="viabilityScore">
+                                    <span class="score-value">0</span>
+                                    <span class="score-label">/100</span>
+                                </div>
+                                <div class="score-description">
+                                    <h4>Puntuación de Viabilidad</h4>
+                                    <p>Basada en rentabilidad, punto de equilibrio y proyecciones</p>
+                                </div>
+                            </div>
+
+                            <div class="viability-factors">
+                                <div class="factor-item">
+                                    <div class="factor-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="factor-content">
+                                        <h5>Fortalezas</h5>
+                                        <ul id="fortalezas">
+                                            <li>Margen de ganancia saludable</li>
+                                            <li>Punto de equilibrio alcanzable</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="factor-item">
+                                    <div class="factor-icon warning">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="factor-content">
+                                        <h5>Riesgos</h5>
+                                        <ul id="riesgos">
+                                            <li>Competencia intensa</li>
+                                            <li>Estacionalidad marcada</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="factor-item">
+                                    <div class="factor-icon info">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <div class="factor-content">
+                                        <h5>Recomendaciones</h5>
+                                        <ul id="recomendaciones">
+                                            <li>Considera diversificar productos</li>
+                                            <li>Optimiza costos operativos</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decisión Final -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-gavel"></i> Decisión Final</h3>
+                        
+                        <div class="decision-container">
+                            <div class="decision-card" id="decisionCard">
+                                <div class="decision-header">
+                                    <i class="fas fa-question-circle"></i>
+                                    <h4>¿Deberías Emprender?</h4>
+                                </div>
+                                <div class="decision-content">
+                                    <div class="decision-answer" id="decisionAnswer">
+                                        <span class="answer-text">Analizando datos...</span>
+                                    </div>
+                                    <div class="decision-reasoning" id="decisionReasoning">
+                                        <p>Basado en el análisis completo de tu negocio</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen Ejecutivo -->
+                    <div class="summary-section">
+                        <h3><i class="fas fa-file-alt"></i> Resumen Ejecutivo</h3>
+                        <div class="executive-summary">
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <span>Inversión Inicial:</span>
+                                    <span class="summary-amount" id="resumenInversion">$0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Costos Fijos Mensuales:</span>
+                                    <span class="summary-amount" id="resumenCostosFijos">$0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Costo Promedio por Producto:</span>
+                                    <span class="summary-amount" id="resumenCostoProducto">$0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Precio Promedio de Venta:</span>
+                                    <span class="summary-amount" id="resumenPrecioVenta">$0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Margen Promedio:</span>
+                                    <span class="summary-amount" id="resumenMargenFinal">0%</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Punto de Equilibrio:</span>
+                                    <span class="summary-amount" id="resumenEquilibrio">0 unidades/mes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navegación Final -->
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='precios.html'">
+                            <i class="fas fa-arrow-left"></i>
+                            Anterior
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="guardarSimulacion()">
+                            <i class="fas fa-save"></i>
+                            Guardar Simulación
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="exportarReporte()">
+                            <i class="fas fa-download"></i>
+                            Exportar Reporte
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Ayuda Contextual -->
+            <div class="help-panel">
+                <h3><i class="fas fa-question-circle"></i> ¿Necesitas ayuda con el análisis?</h3>
+                <div class="help-content">
+                    <div class="help-item">
+                        <h4>¿Qué es el punto de equilibrio?</h4>
+                        <p>Es la cantidad de productos que debes vender mensualmente para cubrir todos tus costos fijos. Por encima de este punto, empiezas a generar ganancias.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Cómo interpretar el flujo de caja?</h4>
+                        <p>Muestra mes a mes si tendrás ganancias o pérdidas. Considera la estacionalidad y el crecimiento gradual del negocio.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Qué significa la puntuación de viabilidad?</h4>
+                        <p>Es una evaluación integral que considera rentabilidad, riesgos y proyecciones. Una puntuación alta indica mayor probabilidad de éxito.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Simulador de Negocios. Desarrollado para emprendedores.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

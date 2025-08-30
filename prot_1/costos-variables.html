@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Costos Variables - Simulador</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Simulador de Negocios</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Mis Simulaciones</a>
+                <a href="#" class="nav-link">Ayuda</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 66.66%"></div>
+            </div>
+
+            <div class="form-container">
+                <div class="form-header">
+                    <i class="fas fa-utensils"></i>
+                    <h2>Paso 4: Costos Variables (Recetas)</h2>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Costos Variables</strong> Son los costos que cambian según la cantidad que vendas. 
+                        Incluyen ingredientes, empaques y mano de obra directa por producto.
+                    </div>
+                </div>
+
+                <form id="costosVariablesForm">
+                    <!-- Productos Principales -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-star"></i> Productos Principales</h3>
+                        <p class="section-description">Define hasta 3 productos principales de tu negocio con sus recetas completas.</p>
+                        
+                        <div class="products-container">
+                            <!-- Producto 1 -->
+                            <div class="product-card" id="producto1">
+                                <div class="product-header">
+                                    <h4><i class="fas fa-hamburger"></i> Producto 1</h4>
+                                    <button type="button" class="btn-remove" onclick="removeProduct(1)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Nombre del Producto</label>
+                                        <input type="text" class="form-input product-name" placeholder="Ej: Hamburguesa Clásica" data-product="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Tipo</label>
+                                        <select class="form-select product-type" data-product="1">
+                                            <option value="comida">Comida</option>
+                                            <option value="bebida">Bebida</option>
+                                            <option value="reventa">Reventa</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Ingredientes -->
+                                <div class="ingredients-section">
+                                    <h5><i class="fas fa-list"></i> Ingredientes</h5>
+                                    <div class="ingredients-list" id="ingredients1">
+                                        <div class="ingredient-item">
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label class="form-label">Ingrediente</label>
+                                                    <input type="text" class="form-input ingredient-name" placeholder="Ej: Carne de res" data-product="1" data-ingredient="1">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label">Cantidad</label>
+                                                    <input type="number" class="form-input ingredient-quantity" placeholder="100" data-product="1" data-ingredient="1" step="0.1">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label">Unidad</label>
+                                                    <select class="form-select ingredient-unit" data-product="1" data-ingredient="1">
+                                                        <option value="g">Gramos (g)</option>
+                                                        <option value="kg">Kilogramos (kg)</option>
+                                                        <option value="ml">Mililitros (ml)</option>
+                                                        <option value="l">Litros (l)</option>
+                                                        <option value="unidad">Unidad</option>
+                                                        <option value="hoja">Hoja</option>
+                                                        <option value="rebanada">Rebanada</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label">Precio de Compra</label>
+                                                    <input type="number" class="form-input ingredient-price" placeholder="0" data-product="1" data-ingredient="1" step="0.01">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label">Unidad de Compra</label>
+                                                    <input type="text" class="form-input ingredient-purchase-unit" placeholder="Ej: kg, caja, unidad" data-product="1" data-ingredient="1">
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn-remove-ingredient" onclick="removeIngredient(1, 1)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addIngredient(1)">
+                                        <i class="fas fa-plus"></i> Agregar Ingrediente
+                                    </button>
+                                </div>
+
+                                <!-- Mano de Obra -->
+                                <div class="labor-section">
+                                    <h5><i class="fas fa-clock"></i> Mano de Obra</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">Tiempo de Preparación (minutos)</label>
+                                            <input type="number" class="form-input labor-time" placeholder="10" data-product="1" min="0" step="0.5">
+                                            <div class="form-help">Tiempo promedio para preparar este producto</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Rol Responsable</label>
+                                            <select class="form-select labor-role" data-product="1">
+                                                <option value="cocinero">Cocinero</option>
+                                                <option value="mesero">Mesero</option>
+                                                <option value="caja">Caja</option>
+                                                <option value="limpieza">Limpieza</option>
+                                            </select>
+                                            <div class="form-help">Quién prepara este producto</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Resumen del Producto -->
+                                <div class="product-summary">
+                                    <div class="summary-item">
+                                        <span>Costo de Ingredientes:</span>
+                                        <span class="summary-amount" id="costoIngredientes1">$0</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span>Costo de Mano de Obra:</span>
+                                        <span class="summary-amount" id="costoManoObra1">$0</span>
+                                    </div>
+                                    <div class="summary-item total-product">
+                                        <span><strong>Costo Total por Unidad:</strong></span>
+                                        <span class="summary-amount" id="costoTotal1">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botón para agregar más productos -->
+                            <button type="button" class="btn btn-secondary btn-add-product" id="addProductBtn" onclick="addProduct()">
+                                <i class="fas fa-plus"></i> Agregar Otro Producto
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Resumen General -->
+                    <div class="summary-section">
+                        <h3><i class="fas fa-calculator"></i> Resumen de Costos Variables</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span>Total Productos Definidos:</span>
+                                <span class="summary-amount" id="totalProductos">1</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Costo Promedio por Producto:</span>
+                                <span class="summary-amount" id="costoPromedio">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Producto con Mayor Costo:</span>
+                                <span class="summary-amount" id="productoMayorCosto">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alertas IA -->
+                    <div id="iaAlerts" class="alerts-container"></div>
+
+                    <!-- Navegación -->
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='costos-fijos.html'">
+                            <i class="fas fa-arrow-left"></i>
+                            Anterior
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Siguiente
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Ayuda Contextual -->
+            <div class="help-panel">
+                <h3><i class="fas fa-question-circle"></i> ¿Necesitas ayuda con las recetas?</h3>
+                <div class="help-content">
+                    <div class="help-item">
+                        <h4>¿Cómo ingresar los ingredientes?</h4>
+                        <p>Ingresa la cantidad exacta que usas por producto. Por ejemplo: 100g de carne, 1 hoja de lechuga, 50ml de salsa. El sistema calculará automáticamente el costo unitario.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Qué es la mano de obra directa?</h4>
+                        <p>Es el tiempo que toma preparar cada producto. Se calcula basado en el salario del personal y se suma al costo total del producto.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Cómo funciona la reventa?</h4>
+                        <p>Para productos como bebidas que compras y vendes directamente. Solo ingresa el precio de compra y el sistema calculará el margen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Simulador de Negocios. Desarrollado para emprendedores.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

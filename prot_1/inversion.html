@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inversión Inicial - Simulador</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Simulador de Negocios</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Mis Simulaciones</a>
+                <a href="#" class="nav-link">Ayuda</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 33.33%"></div>
+            </div>
+
+            <div class="form-container">
+                <div class="form-header">
+                    <i class="fas fa-dollar-sign"></i>
+                    <h2>Paso 2: Inversión Inicial</h2>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Inversión Inicial</strong> Son todos los gastos necesarios para montar tu negocio 
+                        antes de abrir las puertas. Incluye equipos, garantías, licencias y más.
+                    </div>
+                </div>
+
+                <form id="inversionForm">
+                    <!-- Gastos de Montaje -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-tools"></i> Gastos de Montaje</h3>
+                        
+                        <div class="expense-items">
+                            <div class="expense-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Garantía de Arriendo</label>
+                                        <input type="number" class="form-input expense-input" data-category="garantia" placeholder="0" min="0">
+                                        <div class="form-help">Generalmente 2 meses de arriendo</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Equipos de Cocina</label>
+                                        <input type="number" class="form-input expense-input" data-category="equipos" placeholder="0" min="0">
+                                        <div class="form-help">Cocinas, refrigeradores, utensilios</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="expense-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Mobiliario</label>
+                                        <input type="number" class="form-input expense-input" data-category="mobiliario" placeholder="0" min="0">
+                                        <div class="form-help">Mesas, sillas, mostradores</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Decoración</label>
+                                        <input type="number" class="form-input expense-input" data-category="decoracion" placeholder="0" min="0">
+                                        <div class="form-help">Pintura, iluminación, elementos decorativos</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="expense-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Licencias y Permisos</label>
+                                        <input type="number" class="form-input expense-input" data-category="licencias" placeholder="0" min="0">
+                                        <div class="form-help">Municipales, sanitarios, alcohol</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Sistema POS</label>
+                                        <input type="number" class="form-input expense-input" data-category="pos" placeholder="0" min="0">
+                                        <div class="form-help">Caja registradora, software</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="expense-item">
+                                <div class="form-group">
+                                    <label class="form-label">Otros Gastos</label>
+                                    <input type="number" class="form-input expense-input" data-category="otros" placeholder="0" min="0">
+                                    <div class="form-help">Gastos adicionales no contemplados</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="total-section">
+                            <div class="total-item">
+                                <span>Total Gastos de Montaje:</span>
+                                <span class="total-amount" id="totalGastos">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fuentes de Financiamiento -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-piggy-bank"></i> Fuentes de Financiamiento</h3>
+                        
+                        <div class="funding-sources">
+                            <div class="funding-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Capital Propio</label>
+                                        <input type="number" class="form-input funding-input" data-source="capital" placeholder="0" min="0">
+                                        <div class="form-help">Dinero de tus ahorros o inversión personal</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Préstamos</label>
+                                        <input type="number" class="form-input funding-input" data-source="prestamos" placeholder="0" min="0">
+                                        <div class="form-help">Préstamos bancarios o de familiares</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="funding-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Tasa de Interés (%)</label>
+                                        <input type="number" class="form-input" id="tasaInteres" placeholder="15" min="0" max="50" step="0.1">
+                                        <div class="form-help">Tasa anual del préstamo</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Plazo (meses)</label>
+                                        <input type="number" class="form-input" id="plazoPrestamo" placeholder="24" min="1" max="120">
+                                        <div class="form-help">Tiempo para pagar el préstamo</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="total-section">
+                            <div class="total-item">
+                                <span>Total Financiamiento:</span>
+                                <span class="total-amount" id="totalFinanciamiento">$0</span>
+                            </div>
+                            <div class="total-item">
+                                <span>Cuota Mensual Préstamo:</span>
+                                <span class="total-amount" id="cuotaMensual">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen -->
+                    <div class="summary-section">
+                        <h3><i class="fas fa-calculator"></i> Resumen de Inversión</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span>Total Inversión Necesaria:</span>
+                                <span class="summary-amount" id="totalInversion">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Capital Propio:</span>
+                                <span class="summary-amount" id="resumenCapital">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Préstamos:</span>
+                                <span class="summary-amount" id="resumenPrestamos">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Déficit/Excedente:</span>
+                                <span class="summary-amount" id="diferencia">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alertas IA -->
+                    <div id="iaAlerts" class="alerts-container"></div>
+
+                    <!-- Navegación -->
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='configuracion.html'">
+                            <i class="fas fa-arrow-left"></i>
+                            Anterior
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Siguiente
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Ayuda Contextual -->
+            <div class="help-panel">
+                <h3><i class="fas fa-question-circle"></i> ¿Necesitas ayuda con la inversión?</h3>
+                <div class="help-content">
+                    <div class="help-item">
+                        <h4>¿Qué incluir en gastos de montaje?</h4>
+                        <p>Todo lo necesario para abrir las puertas: equipos, mobiliario, garantías, licencias y decoración. No incluyas gastos operativos mensuales.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Cómo calcular la garantía de arriendo?</h4>
+                        <p>Generalmente es 2 meses del arriendo mensual. Si el arriendo será $800, la garantía sería $1,600.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Qué pasa si no tengo suficiente capital propio?</h4>
+                        <p>El simulador te mostrará el déficit y calculará el impacto de los préstamos en tus gastos mensuales.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Simulador de Negocios. Desarrollado para emprendedores.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

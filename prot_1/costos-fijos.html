@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Costos Fijos - Simulador</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Simulador de Negocios</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Mis Simulaciones</a>
+                <a href="#" class="nav-link">Ayuda</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 50%"></div>
+            </div>
+
+            <div class="form-container">
+                <div class="form-header">
+                    <i class="fas fa-anchor"></i>
+                    <h2>Paso 3: Costos Fijos</h2>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Costos Fijos</strong> Son gastos que debes pagar mensualmente sin importar cuánto vendas. 
+                        Incluyen arriendo, salarios, servicios básicos y otros gastos operativos.
+                    </div>
+                </div>
+
+                <form id="costosFijosForm">
+                    <!-- Arriendo -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-building"></i> Arriendo</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="arriendo">Arriendo Mensual *</label>
+                                <input type="number" id="arriendo" class="form-input fixed-cost-input" data-category="arriendo" placeholder="0" min="0">
+                                <div class="form-help">Costo mensual del local</div>
+                                <div class="form-error" id="arriendoError" style="display: none;">
+                                    Ingresa el monto del arriendo
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="serviciosArriendo">Servicios Incluidos</label>
+                                <select id="serviciosArriendo" class="form-select">
+                                    <option value="ninguno">Ninguno</option>
+                                    <option value="agua">Agua</option>
+                                    <option value="luz">Luz</option>
+                                    <option value="agua-luz">Agua y Luz</option>
+                                    <option value="todos">Todos los servicios</option>
+                                </select>
+                                <div class="form-help">Servicios incluidos en el arriendo</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-users"></i> Personal</h3>
+                        
+                        <div class="staff-container">
+                            <div class="staff-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Cocinero</label>
+                                        <input type="number" class="form-input staff-input" data-role="cocinero" placeholder="0" min="0">
+                                        <div class="form-help">Salario mensual base</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Meseros</label>
+                                        <input type="number" class="form-input staff-input" data-role="meseros" placeholder="0" min="0">
+                                        <div class="form-help">Salario mensual base</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="staff-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Caja/Administrativo</label>
+                                        <input type="number" class="form-input staff-input" data-role="caja" placeholder="0" min="0">
+                                        <div class="form-help">Salario mensual base</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Limpieza</label>
+                                        <input type="number" class="form-input staff-input" data-role="limpieza" placeholder="0" min="0">
+                                        <div class="form-help">Salario mensual base</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="staff-item">
+                                <div class="form-group">
+                                    <label class="form-label">Otros Empleados</label>
+                                    <input type="number" class="form-input staff-input" data-role="otros" placeholder="0" min="0">
+                                    <div class="form-help">Salarios adicionales (seguridad, etc.)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="total-section">
+                            <div class="total-item">
+                                <span>Total Salarios Base:</span>
+                                <span class="total-amount" id="totalSalariosBase">$0</span>
+                            </div>
+                            <div class="total-item">
+                                <span>Costo Real (con IESS, décimos, vacaciones):</span>
+                                <span class="total-amount" id="totalSalariosReal">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Servicios -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-bolt"></i> Servicios</h3>
+                        
+                        <div class="services-grid">
+                            <div class="service-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="luz">Luz</label>
+                                        <input type="number" id="luz" class="form-input service-input" data-service="luz" placeholder="0" min="0">
+                                        <div class="form-help">Costo mensual de electricidad</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="agua">Agua</label>
+                                        <input type="number" id="agua" class="form-input service-input" data-service="agua" placeholder="0" min="0">
+                                        <div class="form-help">Costo mensual de agua</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="service-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="internet">Internet/Teléfono</label>
+                                        <input type="number" id="internet" class="form-input service-input" data-service="internet" placeholder="0" min="0">
+                                        <div class="form-help">Conexión a internet y teléfono</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="gas">Gas</label>
+                                        <input type="number" id="gas" class="form-input service-input" data-service="gas" placeholder="0" min="0">
+                                        <div class="form-help">Gas para cocina</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Otros Costos Fijos -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-cogs"></i> Otros Costos Fijos</h3>
+                        
+                        <div class="other-costs">
+                            <div class="cost-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="seguridad">Seguridad</label>
+                                        <input type="number" id="seguridad" class="form-input other-cost-input" data-cost="seguridad" placeholder="0" min="0">
+                                        <div class="form-help">Servicio de seguridad, alarmas</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="mantenimiento">Mantenimiento</label>
+                                        <input type="number" id="mantenimiento" class="form-input other-cost-input" data-cost="mantenimiento" placeholder="0" min="0">
+                                        <div class="form-help">Mantenimiento de equipos, limpieza</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cost-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="marketing">Marketing</label>
+                                        <input type="number" id="marketing" class="form-input other-cost-input" data-cost="marketing" placeholder="0" min="0">
+                                        <div class="form-help">Publicidad, redes sociales, promociones</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="contabilidad">Contabilidad</label>
+                                        <input type="number" id="contabilidad" class="form-input other-cost-input" data-cost="contabilidad" placeholder="0" min="0">
+                                        <div class="form-help">Contador, impuestos</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cost-item">
+                                <div class="form-group">
+                                    <label class="form-label" for="otrosFijos">Otros Gastos Fijos</label>
+                                    <input type="number" id="otrosFijos" class="form-input other-cost-input" data-cost="otros" placeholder="0" min="0">
+                                    <div class="form-help">Gastos adicionales no contemplados</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen de Costos Fijos -->
+                    <div class="summary-section">
+                        <h3><i class="fas fa-calculator"></i> Resumen de Costos Fijos Mensuales</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span>Arriendo:</span>
+                                <span class="summary-amount" id="resumenArriendo">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Personal (costo real):</span>
+                                <span class="summary-amount" id="resumenPersonal">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Servicios:</span>
+                                <span class="summary-amount" id="resumenServicios">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Otros Costos:</span>
+                                <span class="summary-amount" id="resumenOtros">$0</span>
+                            </div>
+                            <div class="summary-item total-summary">
+                                <span><strong>Total Costos Fijos:</strong></span>
+                                <span class="summary-amount" id="totalCostosFijos">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alertas IA -->
+                    <div id="iaAlerts" class="alerts-container"></div>
+
+                    <!-- Navegación -->
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='inversion.html'">
+                            <i class="fas fa-arrow-left"></i>
+                            Anterior
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Siguiente
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Ayuda Contextual -->
+            <div class="help-panel">
+                <h3><i class="fas fa-question-circle"></i> ¿Necesitas ayuda con los costos fijos?</h3>
+                <div class="help-content">
+                    <div class="help-item">
+                        <h4>¿Por qué se calcula el "costo real" del personal?</h4>
+                        <p>Además del salario base, debes considerar IESS (9.45%), décimo tercer sueldo (8.33%), décimo cuarto (8.33%), vacaciones (4.17%) y fondos de reserva (8.33%).</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Qué servicios debo incluir?</h4>
+                        <p>Incluye todos los servicios que pagas mensualmente: luz, agua, gas, internet, teléfono. Si están incluidos en el arriendo, no los sumes aquí.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>¿Cómo estimar el arriendo?</h4>
+                        <p>Varía según la ubicación. En zonas premium como Cumbayá puede ser $800-$1,500, en Tumbaco $400-$800, en Quito centro $600-$1,200.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Simulador de Negocios. Desarrollado para emprendedores.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
